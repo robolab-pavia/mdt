@@ -1,0 +1,20 @@
+[{
+    "strong": "bold",
+    "em": "italic",
+    "code": "blue",
+    "strikethrogh": "strike",
+    "h1": "bold green",
+    "h2": "bold purple",
+    "h3":"bold blue",
+    "note": "bold"
+},
+{
+    "strong": "bold",
+    "em": "italic",
+    "code": "blue",
+    "strikethrogh": "strike",
+    "h1": "dim cyan",
+    "h2": "magenta",
+    "h3":"reverse",
+    "note": "bold"
+}]
