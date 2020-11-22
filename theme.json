@@ -1,20 +1,8 @@
-[{
-    "strong": "bold",
-    "em": "italic",
-    "code": "blue",
-    "strikethrogh": "strike",
-    "h1": "bold green",
-    "h2": "bold purple",
-    "h3":"bold blue",
-    "note": "bold"
-},
 {
-    "strong": "bold",
-    "em": "italic",
-    "code": "blue",
-    "strikethrogh": "strike",
-    "h1": "dim cyan",
-    "h2": "magenta",
-    "h3":"reverse",
-    "note": "bold"
-}]
+    "strong":"#ff0000 bold",
+    "h1": "#00ff00 bold",
+    "h2": "#0000ff blink",
+    "h3": "#ffff00 bold",
+    "h4": "#00ffff bold",
+    "h5": "#ff00ff bold"
+}
