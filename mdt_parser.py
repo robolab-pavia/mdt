@@ -1,25 +1,14 @@
 
-import mistletoe
 import json
 from plain_render import Plain_Renderer
 import click
-from prompt_toolkit.formatted_text import to_formatted_text, fragment_list_to_text, FormattedText
-from prompt_toolkit.layout import CompletionsMenu, Container, Dimension
-from prompt_toolkit.layout.processors import Processor, Transformation
-from prompt_toolkit.lexers import DynamicLexer, PygmentsLexer
-from prompt_toolkit.widgets import TextArea, SearchToolbar, MenuItem, MenuContainer, Frame
-from prompt_toolkit.enums import DEFAULT_BUFFER
-import handler_view
 from prompt_toolkit.data_structures import Point
 from prompt_toolkit import Application, HTML
 from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit import print_formatted_text
 from prompt_toolkit.styles import Style
-from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.layout.containers import VSplit, Window, HSplit, ConditionalContainer, Float
 from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
-from prompt_toolkit.layout import ScrollOffsets
 from mdt_render import HTMLRenderer
 from mistletoe import Document
 
