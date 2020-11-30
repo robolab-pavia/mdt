@@ -1,7 +1,8 @@
 {
     "strong":"#ff0000 bold",
+    "a": "underline reverse",
     "h1": "#00ff00 bold",
-    "h2": "#0000ff blink",
+    "h2": "#00ffff bold",
     "h3": "#ffff00 bold",
     "h4": "#00ffff bold",
     "h5": "#ff00ff bold"
