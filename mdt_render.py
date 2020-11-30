@@ -144,12 +144,7 @@ class HTMLRenderer(BaseRenderer):
             return '<li></li>'
         inner = ''.join([self.render(child) for child in token.children])
         inner_template = '•{}'
-        if self._suppress_ptag_stack[-1]:
-            if token.children[0].__class__.__name__ == 'Paragraph':
-                inner_template = inner_template[:]
-            if token.children[-1].__class__.__name__ == 'Paragraph':
-                inner_template = inner_template[:]
-        return '<li>{}</li>'.format(inner_template.format(inner))
+        return '<li>    {}</li>\n'.format(inner_template.format(inner))
 
     def render_table(self, token):
         # This is actually gross and I wonder if there's a better way to do it.
