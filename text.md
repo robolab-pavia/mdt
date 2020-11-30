@@ -1,6 +1,7 @@
 # Welcome to StackEdit!
 
-Hi! I'm your first Markdown file in **StackEdit**. If you want to learn about StackEdit, you can read me. If you want to play with Markdown, you can edit me. Once you have finished with me, you can create new files by opening the **file explorer** on the left corner of the navigation bar.
+Hi! I'm your first Markdown file in **StackEdit**. If you want to learn about StackEdit, you can read me.
+If you want to play with Markdown, you can edit me. Once you have finished with me, you can create new files by opening the **file explorer** on the left corner of the navigation bar.
 
 ## Hello world
 **QUI!** text2.md text3.md
@@ -11,7 +12,9 @@ StackEdit stores your files in your browser, which means all your files are auto
 
 ## Create files and folders
 
-The file explorer is accessible using the button in left corner of the navigation bar. You can create a new file by clicking the **New file** button in the file explorer. You can also create folders by clicking the **New folder** button.
+The file explorer is accessible using the button in left corner of the navigation bar.
+You can create a new file by clicking the **New file** button in the file explorer.
+You can also create folders by clicking the **New folder** button.
 
 ## Switch to another file
 
@@ -27,20 +30,22 @@ You can delete the current file by clicking the **Remove** button in the file ex
 
 ## Export a file
 
-You can export the current file by clicking **Export to disk** in the menu. You can choose to export the file as plain Markdown, as HTML using a Handlebars template or as a PDF.
+You can export the current file by clicking **Export to disk** in the menu.
+You can choose to export the file as plain Markdown, as HTML using a Handlebars template or as a PDF.
 
 
 # Synchronization
 
-Synchronization is one of the biggest features of StackEdit. It enables you to synchronize any file in your workspace with other files stored in your **Google Drive**, your **Dropbox** and your **GitHub** accounts. This allows you to keep writing on other devices, collaborate with people you share the file with, integrate easily into your workflow... The synchronization mechanism takes place every minute in the background, downloading, merging, and uploading file modifications.
+Synchronization is one of the biggest features of StackEdit.
+It enables you to synchronize any file in your workspace with other files stored in your **Google Drive**, your **Dropbox** and your **GitHub** accounts.
+This allows you to keep writing on other devices, collaborate with people you share the file with, integrate easily into your workflow.
+The synchronization mechanism takes place every minute in the background, downloading, merging, and uploading file modifications.
 
 There are two types of synchronization and they can complement each other:
 
 - The workspace synchronization will sync all your files, folders and settings automatically. This will allow you to fetch your workspace on any other device.
-	> To start syncing your workspace, just sign in with Google in the menu.
 
 - The file synchronization will keep one file of the workspace synced with one or multiple files in **Google Drive**, **Dropbox** or **GitHub**.
-	> Before starting to sync files, you must link an account in the **Synchronize** sub-menu.
 
 ## Open a file
 
@@ -62,7 +67,6 @@ If you just have modified your file and you want to force syncing, click the **S
 
 Since one file can be synced with multiple locations, you can list and manage synchronized locations by clicking **File synchronization** in the **Synchronize** sub-menu. This allows you to list and remove synchronized locations that are linked to your file.
 
-
 # Publication
 
 Publishing in StackEdit makes it simple for you to publish online your files. Once you're happy with a file, you can publish it to different hosting platforms like **Blogger**, **Dropbox**, **Gist**, **GitHub**, **Google Drive**, **WordPress** and **Zendesk**. With [Handlebars templates](http://handlebarsjs.com/), you have full control over what you export.
@@ -73,7 +77,8 @@ Publishing in StackEdit makes it simple for you to publish online your files. On
 
 You can publish your file by opening the **Publish** sub-menu and by clicking **Publish to**. For some locations, you can choose between the following formats:
 
-- Markdown: publish the Markdown text on a website that can interpret it (**GitHub** for instance),
+- Markdown: publish the Markdown text on a website that can interpret it (**GitHub** for instance).
+
 - HTML: publish the file converted to HTML via a Handlebars template (on a blog for example).
 
 ## Update a publication
