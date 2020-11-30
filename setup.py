@@ -6,6 +6,8 @@ setup(
     py_modules=['mdt_parser'],
     install_requires=[
         'Click',
+        'Mistletoe',
+        'prompt_toolkit',
     ],
     entry_points='''
     [console_scripts]
