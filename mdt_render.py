@@ -1,9 +1,13 @@
 """
-HTML renderer for mistletoe.
+mdt renderer for mistletoe.
 """
 
 import re
 import sys
+import textwrap
+
+import ansiwrap
+import click
 from itertools import chain
 from urllib.parse import quote
 from mistletoe.block_token import HTMLBlock
@@ -15,12 +19,15 @@ else:
     import html
 
 
-class HTMLRenderer(BaseRenderer):
+class MDTRenderer(BaseRenderer):
     """
-    HTML renderer class.
+    mdt renderer class.
     See mistletoe.base_renderer module for more info.
     """
-    def __init__(self, *extras):
+    def __init__(self, *extras, dix, global_ref, app):
+        self.dix = dix
+        self.global_ref = global_ref
+        self.app = app
         """
         Args:
             extras (list): allows subclasses to add even more custom tokens.
@@ -46,42 +53,59 @@ class HTMLRenderer(BaseRenderer):
         return self.escape_html(token.content)
 
     def render_strong(self, token):
-        template = '<strong>{}</strong>'
+        template = click.style(self.dix["strong"]["prefix"]+"{}"+self.dix["strong"]["suffix"],
+                               fg=self.dix["strong"]["color"], bold=self.dix["strong"]["bold"],
+                               bg=self.dix["strong"]["background_color"], underline=self.dix["strong"]["underline"],
+                               blink=self.dix["strong"]["blink"])
         return template.format(self.render_inner(token))
 
     def render_emphasis(self, token):
-        template = '<em>{}</em>'
+        template = click.style(self.dix["emph"]["prefix"] + "{}" + self.dix["emph"]["suffix"],
+                               fg=self.dix["emph"]["color"], bold=self.dix["emph"]["bold"],
+                               bg=self.dix["emph"]["background_color"], underline=self.dix["emph"]["underline"],
+                               blink=self.dix["emph"]["blink"])
         return template.format(self.render_inner(token))
 
     def render_inline_code(self, token):
-        template = '<code>{}</code>'
+        template =  click.style(self.dix["inline_code"]["prefix"] + "{}" + self.dix["inline_code"]["suffix"],
+                               fg=self.dix["inline_code"]["color"], bold=self.dix["inline_code"]["bold"],
+                               bg=self.dix["inline_code"]["background_color"], underline=self.dix["inline_code"]["underline"],
+                               blink=self.dix["inline_code"]["blink"])
         inner = html.escape(token.children[0].content)
         return template.format(inner)
 
     def render_strikethrough(self, token):
-        template = '<del>{}</del>'
+        template = click.style(self.dix["strikethrough"]["prefix"] + "{}" + self.dix["strikethrough"]["suffix"],
+                               fg=self.dix["strikethrough"]["color"], bold=self.dix["strikethrough"]["bold"],
+                               bg=self.dix["strikethrough"]["background_color"],
+                               underline=self.dix["strikethrough"]["underline"],
+                               blink=self.dix["strikethrough"]["blink"]
+                               )
         return template.format(self.render_inner(token))
 
-    def render_image(self, token):
-        template = '<img src="{}" alt="{}"{} />'
-        if token.title:
-            title = ' title="{}"'.format(self.escape_html(token.title))
-        else:
-            title = ''
-        return template.format(token.src, self.render_to_plain(token), title)
-
     def render_link(self, token):
-        template = '<a href="{target}"{title}>{inner}</a>'
         target = self.escape_url(token.target)
-        if token.title:
-            title = ' title="{}"'.format(self.escape_html(token.title))
-        else:
-            title = ''
         inner = self.render_inner(token)
-        return template.format(target=target, title=title, inner=inner)
+        if inner.startswith('\007'):
+            inner = inner.replace('\007', '')
+            template = click.style(self.dix["choosen_link"]["prefix"] + '{inner}' + self.dix["choosen_link"]["suffix"],
+                                   fg=self.dix["choosen_link"]["color"], bold=self.dix["choosen_link"]["bold"],
+                                   bg=self.dix["choosen_link"]["background_color"],
+                                   underline=self.dix["choosen_link"]["underline"],
+                                   blink=self.dix["choosen_link"]["blink"]
+                                   )
+        else:
+            template = click.style(self.dix["link"]["prefix"]+'{inner}'+self.dix["link"]["suffix"],
+                                   fg=self.dix["link"]["color"], bold=self.dix["link"]["bold"],
+                                   bg=self.dix["link"]["background_color"],
+                                   underline=self.dix["link"]["underline"],
+                                   blink=self.dix["link"]["blink"]
+                                   )
+        self.global_ref.update({inner: target})
+        return template.format(target=target, inner=inner)
 
     def render_auto_link(self, token):
-        template = '<a href="{target}">{inner}</a>'
+        template = '"{target}">{inner}'
         if token.mailto:
             target = 'mailto:{}'.format(token.target)
         else:
@@ -100,22 +124,66 @@ class HTMLRenderer(BaseRenderer):
         return token.content
 
     def render_heading(self, token):
-        template = '<h{level}>{inner}</h{level}>'
+        if token.level == 1:
+            template = click.style(self.dix["h1"]["prefix"]+'{inner}'+self.dix["h1"]["suffix"],
+                                   fg=self.dix["h1"]["color"], bold=self.dix["h1"]["bold"],
+                                   bg=self.dix["h1"]["background_color"], underline=self.dix["h1"]["underline"],
+                                   blink=self.dix["h1"]["blink"]
+                                   )
+        elif token.level == 2:
+            template = click.style(self.dix["h2"]["prefix"] + '{inner}' + self.dix["h2"]["suffix"],
+                                   fg=self.dix["h2"]["color"], bold=self.dix["h2"]["bold"],
+                                   bg=self.dix["h2"]["background_color"], underline=self.dix["h2"]["underline"],
+                                   blink=self.dix["h2"]["blink"]
+                                   )
+        elif token.level == 3:
+            template = click.style(self.dix["h3"]["prefix"] + '{inner}' + self.dix["h3"]["suffix"],
+                                   fg=self.dix["h3"]["color"], bold=self.dix["h3"]["bold"],
+                                   bg=self.dix["h3"]["background_color"], underline=self.dix["h3"]["underline"],
+                                   blink=self.dix["h3"]["blink"]
+                                   )
+        elif token.level == 4:
+            template = click.style(self.dix["h4"]["prefix"] + '{inner}' + self.dix["h4"]["suffix"],
+                                   fg=self.dix["h4"]["color"], bold=self.dix["h4"]["bold"],
+                                   bg=self.dix["h4"]["background_color"], underline=self.dix["h4"]["underline"],
+                                   blink=self.dix["h4"]["blink"]
+                                   )
+        elif token.level == 5:
+            template = click.style(self.dix["h5"]["prefix"] + '{inner}' + self.dix["h5"]["suffix"],
+                                   fg=self.dix["h5"]["color"], bold=self.dix["h5"]["bold"],
+                                   bg=self.dix["h5"]["background_color"], underline=self.dix["h5"]["underline"],
+                                   blink=self.dix["h5"]["blink"]
+                                   )
+        elif token.level == 6:
+            template = click.style(self.dix["h6"]["prefix"] + '{inner}' + self.dix["h6"]["suffix"],
+                                   fg=self.dix["h6"]["color"], bold=self.dix["h6"]["bold"],
+                                   bg=self.dix["h6"]["background_color"], underline=self.dix["h6"]["underline"],
+                                   blink=self.dix["h6"]["blink"]
+                                   )
         inner = self.render_inner(token)
         return template.format(level=token.level, inner=inner)
 
     def render_quote(self, token):
-        elements = ['<blockquote>']
+        elements = [""]
         self._suppress_ptag_stack.append(False)
         elements.extend([self.render(child) for child in token.children])
         self._suppress_ptag_stack.pop()
-        elements.append('</blockquote>')
-        return '\n'.join(elements)
+        elements.append("")
+        return click.style(self.dix["block_quote"]["prefix"]+''.join(elements)+self.dix["block_quote"]["suffix"],
+                           fg=self.dix["h6"]["color"], bold=self.dix["h6"]["bold"],
+                           bg=self.dix["h6"]["background_color"], underline=self.dix["h6"]["underline"],
+                           blink=self.dix["h6"]["blink"]
+                           )
+
 
     def render_paragraph(self, token):
         if self._suppress_ptag_stack[-1]:
             return '{}'.format(self.render_inner(token))
-        return '<p>{}</p>'.format(self.render_inner(token))
+        template = format(self.render_inner(token))
+        return click.style(self.dix["paragraph"]["prefix"]+template+self.dix["paragraph"]["suffix"], fg=self.dix["paragraph"]["color"], bold=self.dix["paragraph"]["bold"],
+                           bg=self.dix["paragraph"]["background_color"], underline=self.dix["paragraph"]["underline"],
+                           blink=self.dix["paragraph"]["blink"]
+                           )
 
     def render_block_code(self, token):
         template = '<pre><code{attr}>{inner}</code></pre>'
@@ -127,59 +195,18 @@ class HTMLRenderer(BaseRenderer):
         return template.format(attr=attr, inner=inner)
 
     def render_list(self, token):
-        template = '<{tag}{attr}>{inner}</{tag}>'
-        if token.start is not None:
-            tag = 'ol'
-            attr = ' start="{}"'.format(token.start) if token.start != 1 else ''
-        else:
-            tag = 'ul'
-            attr = ''
+        template = '{}'
         self._suppress_ptag_stack.append(not token.loose)
         inner = ''.join([self.render(child) for child in token.children])
         self._suppress_ptag_stack.pop()
-        return template.format(tag=tag, attr=attr, inner=inner)
+        return template.format(inner)
 
     def render_list_item(self, token):
         if len(token.children) == 0:
-            return '<li></li>'
-        inner = ''.join([self.render(child) for child in token.children])
-        inner_template = '•{}'
-        return '<li>    {}</li>\n'.format(inner_template.format(inner))
-
-    def render_table(self, token):
-        # This is actually gross and I wonder if there's a better way to do it.
-        #
-        # The primary difficulty seems to be passing down alignment options to
-        # reach individual cells.
-        template = '<table>\n{inner}</table>'
-        if hasattr(token, 'header'):
-            head_template = '<thead>\n{inner}</thead>\n'
-            head_inner = self.render_table_row(token.header, is_header=True)
-            head_rendered = head_template.format(inner=head_inner)
-        else: head_rendered = ''
-        body_template = '<tbody>\n{inner}</tbody>\n'
-        body_inner = self.render_inner(token)
-        body_rendered = body_template.format(inner=body_inner)
-        return template.format(inner=head_rendered+body_rendered)
-
-    def render_table_row(self, token, is_header=False):
-        template = '<tr>\n{inner}</tr>\n'
-        inner = ''.join([self.render_table_cell(child, is_header)
-                         for child in token.children])
-        return template.format(inner=inner)
-
-    def render_table_cell(self, token, in_header=False):
-        template = '<{tag}{attr}>{inner}</{tag}>\n'
-        tag = 'th' if in_header else 'td'
-        if token.align is None:
-            align = 'left'
-        elif token.align == 0:
-            align = 'center'
-        elif token.align == 1:
-            align = 'right'
-        attr = ' align="{}"'.format(align)
-        inner = self.render_inner(token)
-        return template.format(tag=tag, attr=attr, inner=inner)
+            return ''
+        inner = self.dix["item"]["prefix"]+''.join([self.render(child) for child in token.children])+self.dix["item"]["suffix"]
+        inner_template = self.dix["item"]["prefix"]+"{}"+self.dix["item"]["suffix"]
+        return '{}'.format(inner)
 
     @staticmethod
     def render_thematic_break(token):
