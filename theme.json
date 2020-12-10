@@ -1,9 +1,141 @@
 {
-    "strong":"#ff0000 bold",
-    "a": "underline reverse",
-    "h1": "#00ff00 bold",
-    "h2": "#00ffff bold",
-    "h3": "#ffff00 bold",
-    "h4": "#00ffff bold",
-    "h5": "#ff00ff bold"
+  "document": {
+    "block_prefix": "\n",
+    "block_suffix": "\n",
+    "margin": 2
+  },
+  "block_quote": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "paragraph": {
+    "prefix": "",
+    "suffix": "\n",
+    "color": "",
+    "background_color": "",
+    "bold": false,
+    "underline": false,
+    "blink": false
+  },
+  "h1": {
+    "prefix": "# ",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "h2": {
+    "prefix": "## ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "h3": {
+    "prefix": "### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "h4": {
+    "prefix": "#### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "h5": {
+    "prefix": "##### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "h6": {
+    "prefix": "###### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "strikethrough": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": false,
+    "underline": false,
+    "blink": false
+  },
+  "emph": {
+    "color": "",
+    "background_color": "",
+    "underline": false,
+    "blink": false,
+    "prefix": "",
+    "suffix": "",
+    "bold": false
+  },
+  "strong": {
+    "color": "",
+    "background_color": "",
+    "underline": false,
+    "blink": false,
+    "prefix": "",
+    "suffix": "",
+    "bold": true
+  },
+  "hr": {
+    "color": "240",
+    "format": "\n--------\n"
+  },
+  "item": {
+    "prefix": "    • ",
+    "suffix": ""
+  },
+  "link": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": true,
+    "blink": false
+  },
+  "choosen_link": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "white",
+    "bold": true,
+    "underline": true,
+    "blink": false
+  },
+    "inline_code": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": true,
+    "blink": false
+    }
 }
