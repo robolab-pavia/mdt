@@ -1,129 +1,133 @@
 import json
+import textwrap
 import webbrowser
+
+import ansiwrap
 from prompt_toolkit.widgets import TextArea
 from plain_render import Plain_Renderer
 import click
 import re
 from prompt_toolkit.data_structures import Point
-from prompt_toolkit import Application, HTML, print_formatted_text
+from prompt_toolkit import Application, HTML, print_formatted_text, ANSI
 from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.styles import Style
 from prompt_toolkit.layout.containers import Window, HSplit
 from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
-from mdt_render import HTMLRenderer
+from mdt_render import MDTRenderer
 from mistletoe import Document
-
-#Global variable
-
 
 # Global key bindings.
 bindings = KeyBindings()
 
 
-#class for global variable
-class Applicationstate():
+# class for global variable
+class Applicationstate:
     max_h = 0
-    #variable for vertical movements
-    v = 0
-    #variablefor horizontal movement
-    h = 0
+    start_position = 0
+    end_position = 0
 
-    #reference text
-    plain_text_=""
+    custom_themes = None
 
-    #flag for scroll
-    just_got_up = True
-    just_got_down = False
+    #margin
+    col = None
+    rmargin = None
+
+    # reference text
+    plain_text_ = ""
+    p_text = None
+
+    # rendered text
+    rendered = ""
+
+    # link counter
+    current_link = -1
 
     app = None
     root_container = None
 
+    width = 40
+
     text_len_ = 0
 
-    #name text variable
+    # name text variable
     named_text = ""
 
-    #iter in md_files
-    md_files = []
-    md_files_iter = 0
-    is_duplicate = False
+    # History file manager
+    history = []
+    history_index = -1
+    # urls vector
+    urls = {}
+    line_link_number = []
 
-    #choose an old files
-    file_chooser = 0
-
-    #urls vector
-    urls = None
-    link_count = -1
-
-
-def get_cursor():
-    return Point(Applicationstate.h, Applicationstate.v)
-
-@bindings.add('b')
-def go_back(event):
+#go back in file.md history
+@bindings.add('left')
+def go_back_history(event):
+    Applicationstate.urls = {}
+    if Applicationstate.history_index > 0:
+        Applicationstate.history_index -= 1
     try:
-        with open(Applicationstate.md_files[Applicationstate.md_files_iter]) as f:
-            fd = Document(f.read())
-            with HTMLRenderer() as render:
-                rendered = render.render(fd)
-            with Plain_Renderer() as render:
-                Applicationstate.plain_text_ = render.render(fd)
-                Applicationstate.v, Applicationstate.h = (0, 0)
-                Applicationstate.max_h = len(rendered.split("\n"))
-                Applicationstate.md_files.append(Applicationstate.named_text)
-                Applicationstate.is_duplicate = False
-                for name in Applicationstate.md_files:
-                    if Applicationstate.named_text == name:
-                        Applicationstate.is_duplicate = True
-                    else:
-                        continue
-                if Applicationstate.is_duplicate == False:
-                    Applicationstate.named_text = Applicationstate.md_files[Applicationstate.md_files_iter]
-                Applicationstate.urls = re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+', rendered)
-                Applicationstate.root_container.get_children()[0].content = FormattedTextControl(text=HTML(rendered),
-                                                                                                 get_cursor_position=get_cursor)
-
-
+        with open(Applicationstate.history[Applicationstate.history_index], 'r') as f:
+            Applicationstate.p_text = f.read()
+        Applicationstate.start_position = 0
+        Applicationstate.current_link = -1
+        return
     except:
         pass
 
 @bindings.add('right')
-def _(event):
-    if Applicationstate.md_files_iter < len(Applicationstate.md_files) and len(Applicationstate.md_files) >= 0:
-        Applicationstate.md_files_iter += 1
+def go_back_history(event):
+    Applicationstate.urls = {}
+    if Applicationstate.history_index < len(Applicationstate.history):
+        Applicationstate.history_index += 1
+    try:
+        with open(Applicationstate.history[Applicationstate.history_index], 'r') as f:
+            Applicationstate.p_text = f.read()
+        Applicationstate.start_position = 0
+        Applicationstate.current_link = -1
+        return
+    except:
+        pass
 
-@bindings.add('left')
-def _(event):
-    if Applicationstate.md_files_iter < len(Applicationstate.md_files) and len(Applicationstate.md_files) >= 0:
-        Applicationstate.md_files_iter -= 1
-
-
+# scroll down the file
 @bindings.add('down')
 def get_down(event):
-    if Applicationstate.just_got_up:
-        Applicationstate.v += Applicationstate.app.renderer.output.get_size()[0]
-        Applicationstate.just_got_up = False
-        Applicationstate.just_got_down = True
-    if Applicationstate.just_got_down:
-        if Applicationstate.v == Applicationstate.max_h-2:
-            Applicationstate.v = Applicationstate.max_h-2
-        else:
-            Applicationstate.v += 1
+    if Applicationstate.end_position < len(Applicationstate.rendered.split("\n")):
+        Applicationstate.start_position += 1
 
+# go to the beginning of the file
+@bindings.add('u')
+def beginning_of_file(event):
+    Applicationstate.start_position = 0
+
+# go to the end of the file
+@bindings.add('e')
+def end_of_file(event):
+    Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - Applicationstate.app.renderer.output.get_size()[0]
+
+# scroll up the file
 @bindings.add('up')
 def get_up(event):
-    if Applicationstate.just_got_down:
-        Applicationstate.v -= Applicationstate.app.renderer.output.get_size()[0]
-        Applicationstate.just_got_up = True
-        Applicationstate.just_got_down = False
-    if Applicationstate.just_got_up:
-        if Applicationstate.v == 0:
-            Applicationstate.v = 0
-        else:
-            Applicationstate.v -= 1
+    if Applicationstate.start_position > 0:
+        Applicationstate.start_position -= 1
 
+# page up the file
+@bindings.add('j')
+def page_up(event):
+    if Applicationstate.start_position > Applicationstate.app.renderer.output.get_size()[0]:
+        Applicationstate.start_position -= Applicationstate.app.renderer.output.get_size()[0]
+    else:
+        Applicationstate.start_position = 0
 
+# page down the file
+@bindings.add('k')
+def page_down(event):
+    if Applicationstate.start_position < len(Applicationstate.rendered.split('\n'))-Applicationstate.app.renderer.output.get_size()[0]:
+        Applicationstate.start_position += Applicationstate.app.renderer.output.get_size()[0]
+    else:
+        Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - \
+                                          Applicationstate.app.renderer.output.get_size()[0]
+
+# quit the application
 @bindings.add('q')
 def exit_(event):
     """
@@ -134,114 +138,125 @@ def exit_(event):
     """
     event.app.exit()
 
+# go to the next link
 @bindings.add('tab')
 def link_after(event):
-    if Applicationstate.link_count + 1 < len(Applicationstate.urls):
-        Applicationstate.link_count += 1
-        Applicationstate.v = 0
-        Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[Applicationstate.link_count]
-        word = Applicationstate.urls[Applicationstate.link_count]
-        splitted_text = Applicationstate.plain_text_.split('\n')
-        for vec in splitted_text:
-            if word in vec:
-                return
-            else:
-                if Applicationstate.v <= Applicationstate.max_h-2:
-                    Applicationstate.v += 1
+    if Applicationstate.current_link < len(list(Applicationstate.urls))-1:
+        Applicationstate.current_link += 1
+        Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+        Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+    if len(list(Applicationstate.urls)) == 1:
+        Applicationstate.start_position = Applicationstate.line_link_number[0] - 1
+    titolo = list(Applicationstate.urls)[Applicationstate.current_link]
+    link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+    Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('['+titolo+']('+link+')', '[\007'+titolo+']('+link+')')
 
+
+# go to the previous link
 @bindings.add('s-tab')
 def link_before(event):
-    if Applicationstate.link_count > 0:
-        Applicationstate.link_count -= 1
-        Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[Applicationstate.link_count]
-        word = Applicationstate.urls[Applicationstate.link_count]
-        Applicationstate.v = 0
-        splitted_text = Applicationstate.plain_text_.split('\n')
-        for vec in splitted_text:
-            if word in vec:
-                return
-            else:
-                if Applicationstate.v <= Applicationstate.max_h - 2:
-                    Applicationstate.v += 1
+    if Applicationstate.current_link > 0:
+        Applicationstate.current_link -= 1
+        Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[
+            list(Applicationstate.urls)[Applicationstate.current_link]]
+        #prendo la riga del link
+        Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+        titolo = list(Applicationstate.urls)[Applicationstate.current_link]
+        link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+        Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
+                                                                                      '[\007' + titolo + '](' + link + ')')
 
+# open the choosen link
 @bindings.add('enter')
 def enter_link(event):
-    link_ = Applicationstate.urls[Applicationstate.link_count]
-    if(link_.endswith(".md")):
-        Applicationstate.md_files.append(Applicationstate.named_text)
+    link_ = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+    if (link_.endswith(".md")):
+        Applicationstate.urls = {}
+        Applicationstate.history_index += 1
         try:
-            with open(link_) as f:
-                fd = Document(f.read())
-                with HTMLRenderer() as render:
-                    rendered = render.render(fd)
-                with Plain_Renderer() as render:
-                    Applicationstate.plain_text_ = render.render(fd)
-                Applicationstate.v, Applicationstate.h = (0, 0)
-                Applicationstate.named_text = link_
-                Applicationstate.max_h = len(rendered.split("\n"))
-                Applicationstate.link_count = - 1
-                Applicationstate.urls = re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+', rendered)
-                Applicationstate.root_container.get_children()[0].content = FormattedTextControl(text=HTML(rendered),
-                                                                               get_cursor_position=get_cursor)
-                return
+            with open(link_, 'r') as f:
+                Applicationstate.p_text = f.read()
+            Applicationstate.start_position = 0
+            Applicationstate.current_link = -1
+            Applicationstate.history.append(link_)
+            return
         except:
             pass
     else:
         try:
-            webbrowser.open(Applicationstate.urls[Applicationstate.link_count])
+            webbrowser.open(Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]])
         except:
             pass
 
+# resize window every time (callable)
+def wrap_text(app):
+    Applicationstate.app = app
+    fd = Document(Applicationstate.p_text)
+    with MDTRenderer(dix=Applicationstate.custom_themes, global_ref=Applicationstate.urls, app=app) as render:
+        Applicationstate.rendered = render.render(fd)
+        if Applicationstate.col != None:
+            Applicationstate.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, Applicationstate.col -
+                                                                           Applicationstate.custom_themes["document"][
+                                                                               "margin"])) for l in
+                                                   Applicationstate.rendered.split('\n')])
+        else:
+            Applicationstate.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, app.renderer.output.get_size()[1] -
+                                                                           Applicationstate.custom_themes["document"][
+                                                                                "margin"]-Applicationstate.rmargin)) for l in
+                                                    Applicationstate.rendered.split('\n')])
+        Applicationstate.rendered = textwrap.indent(Applicationstate.rendered,
+                                                    " " * Applicationstate.custom_themes["document"]["margin"])
 
-# creo il parser per il terminale
+    Applicationstate.root_container.get_children()[0].content = FormattedTextControl(
+        text=ANSI("\n".join(Applicationstate.rendered.split("\n")[Applicationstate.start_position:len(Applicationstate.rendered.split("\n"))])))
+    Applicationstate.end_position = Applicationstate.start_position + app.renderer.output.get_size()[0]
+    Applicationstate.line_link_number = []
+    for w in (list(Applicationstate.urls)):
+        count = 0
+        for l in Applicationstate.rendered.split("\n"):
+            count += 1
+            if w in l:
+                Applicationstate.line_link_number.append(count)
+
+# main
 @click.command()
-@click.argument('text',  required=True)
+@click.argument('text', required=True)
 @click.option('--theme', default=0, help='theme you want to use')
-@click.option('--i', default=False, help='Interactive mode')
-
-def mdt(text, theme, i):
-
-    Applicationstate.named_text = text
+@click.option('-i', help='Interactive mode', is_flag=True)
+@click.option('-col', help='Choose the last column width', type=int)
+@click.option('-rmargin', help='Right margin', type=int, default=0)
+def mdt(text, theme, i, col=None, rmargin=0):
+    if col != None and rmargin != 0:
+        raise Exception("You can't put -col and -rmargin attribute!")
 
     with open('theme.json') as j:
-        custom_themes = json.load(j)
-
+        Applicationstate.custom_themes = json.load(j)
 
     with open(text, 'r') as f:
-        fd = Document(f.read())
-        with HTMLRenderer() as render:
-            rendered = render.render(fd)
-        with Plain_Renderer() as render:
-            Applicationstate.plain_text_ = render.render(fd)
+        Applicationstate.p_text = f.read()
+    Applicationstate.history.append(text)
+    Applicationstate.max_h = len(Applicationstate.rendered.split("\n"))
+    Applicationstate.col = col
+    Applicationstate.rmargin = rmargin
 
-        #text theme
-        style = Style.from_dict(custom_themes)
+    ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
 
-    if i==False:
-        print_formatted_text(HTML(rendered), style=style)
+    wind1 = Window(
+        content=ftc,
+        always_hide_cursor=True,
+    )
+    wind1.vertical_scroll = 1
 
+    Applicationstate.root_container = HSplit(
+        [
+            wind1,
+
+            TextArea('Tab to choose link:', focusable=False),
+        ])
+    Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
+                                       before_render=wrap_text)
+    wrap_text(Applicationstate.app)
+    if i == False:
+        print_formatted_text(ANSI(Applicationstate.rendered))
     else:
-        Applicationstate.max_h = len(rendered.split("\n"))
-
-        Applicationstate.urls = re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+', rendered)
-
-        ftc = FormattedTextControl(text=HTML(rendered), get_cursor_position=get_cursor)
-        print(Applicationstate.plain_text_)
-
-        wind1 = Window(
-                    content=ftc,
-                    wrap_lines=True,
-                    always_hide_cursor=True,
-                )
-        wind1.vertical_scroll = 1
-
-        Applicationstate.root_container =HSplit(
-            [
-                wind1,
-
-                TextArea('Tab to choose link:', focusable=False),
-                                                 ])
-        print(Applicationstate.plain_text_.split('\n')[0])
-        Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container), style=style)
-        print(Applicationstate.plain_text_.split('\n'))
         Applicationstate.app.run()
