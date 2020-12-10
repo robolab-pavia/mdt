@@ -4,10 +4,10 @@ Hi! I'm your first Markdown file in **StackEdit**. If you want to learn about St
 If you want to play with Markdown, you can edit me. Once you have finished with me, you can create new files by opening the **file explorer** on the left corner of the navigation bar.
 
 ## Hello world
-**QUI!** text2.md text3.md
+Hello world :)
 
 # Files
-
+Sample link: [Firefox_link](https://www.mozilla.org/it/firefox/new/)
 StackEdit stores your files in your browser, which means all your files are automatically saved locally and are accessible **offline!**
 
 ## Create files and folders
@@ -17,15 +17,15 @@ You can create a new file by clicking the **New file** button in the file explor
 You can also create folders by clicking the **New folder** button.
 
 ## Switch to another file
-
+Sample md file: [File2_path](/Users/andre/PycharmProjects/mdw/text2.md)
 All your files and folders are presented as a tree in the file explorer. You can switch from one to another by clicking a file in the tree.
 
 ## Rename a file
-
+Sample md file: [file3_path](/Users/andre/PycharmProjects/mdw/text3.md)
 You can rename the current file by clicking the file name in the navigation bar or by clicking the **Rename** button in the file explorer.
 
 ## Delete a file
-
+Sample link: [Google_link](http://google.com/)
 You can delete the current file by clicking the **Remove** button in the file explorer. The file will be moved into the **Trash** folder and automatically deleted after 7 days of inactivity.
 
 ## Export a file
@@ -69,7 +69,7 @@ Since one file can be synced with multiple locations, you can list and manage sy
 
 # Publication
 
-Publishing in StackEdit makes it simple for you to publish online your files. Once you're happy with a file, you can publish it to different hosting platforms like **Blogger**, **Dropbox**, **Gist**, **GitHub**, **Google Drive**, **WordPress** and **Zendesk**. With [Handlebars templates](http://handlebarsjs.com/), you have full control over what you export.
+Publishing in StackEdit makes it simple for you to publish online your files. Once you're happy with a file, you can publish it to different hosting platforms like **Blogger**, **Dropbox**, **Gist**, **GitHub**, **Google Drive**, **WordPress** and **Zendesk**. With [Handlebars_templates](http://handlebarsjs.com/), you have full control over what you export.
 
 > Before starting to publish, you must link an account in the **Publish** sub-menu.
 
@@ -81,7 +81,7 @@ You can publish your file by opening the **Publish** sub-menu and by clicking **
 
 - HTML: publish the file converted to HTML via a Handlebars template (on a blog for example).
 
-## Update a publication
+## Update a publication56
 
 After publishing, StackEdit keeps your file linked to that publication which makes it easy for you to re-publish it. Once you have modified your file and you want to update your publication, click on the **Publish now** button in the navigation bar.
 
