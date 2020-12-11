@@ -214,6 +214,7 @@ def wrap_text(app):
     fd = Document(Applicationstate.p_text)
     with MDTRenderer(dix=Applicationstate.custom_themes, global_ref=Applicationstate.urls, app=app) as render:
         Applicationstate.rendered = render.render(fd)
+        Applicationstate.rendered = Applicationstate.custom_themes["document"]["prefix"]+Applicationstate.rendered+Applicationstate.custom_themes["document"]["suffix"]
         if Applicationstate.col != None:
             Applicationstate.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, Applicationstate.col -
                                                                            Applicationstate.custom_themes["document"][
