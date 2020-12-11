@@ -1,7 +1,7 @@
 {
   "document": {
-    "block_prefix": "\n",
-    "block_suffix": "\n",
+    "prefix": "",
+    "suffix": "",
     "margin": 2
   },
   "block_quote": {
@@ -103,12 +103,8 @@
     "suffix": "",
     "bold": true
   },
-  "hr": {
-    "color": "240",
-    "format": "\n--------\n"
-  },
   "item": {
-    "prefix": "    • ",
+    "prefix": "• ",
     "suffix": ""
   },
   "link": {

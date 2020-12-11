@@ -186,7 +186,7 @@ class MDTRenderer(BaseRenderer):
                            )
 
     def render_block_code(self, token):
-        template = '<pre><code{attr}>{inner}</code></pre>'
+        template = '{attr}>{inner}'
         if token.language:
             attr = ' class="{}"'.format('language-{}'.format(self.escape_html(token.language)))
         else:
