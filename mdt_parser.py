@@ -54,10 +54,25 @@ class Applicationstate:
 
     # History file manager
     history = []
-    history_index = -1
+    history_index = 0
+    file_backwards = ""
+    file_forward = ""
+    history_template = 'file_backwards:"{}"  file_forward:"{}"'
     # urls vector
     urls = {}
     line_link_number = []
+
+def change_history_container():
+    if len(Applicationstate.history) > 1 and Applicationstate.history_index > 0:
+        Applicationstate.file_backwards = Applicationstate.history[Applicationstate.history_index-1][1]
+    if Applicationstate.history_index < len(Applicationstate.history)-1:
+        Applicationstate.file_forward = Applicationstate.history[Applicationstate.history_index+1][1]
+    if Applicationstate.history_index == len(Applicationstate.history)-1:
+        Applicationstate.file_forward = ""
+    if Applicationstate.history_index == 0:
+        Applicationstate.file_backwards = ""
+    Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.history_template.format(Applicationstate.file_backwards, Applicationstate.file_forward)
+
 
 #go back in file.md history
 @bindings.add('left')
@@ -66,10 +81,11 @@ def go_back_history(event):
     if Applicationstate.history_index > 0:
         Applicationstate.history_index -= 1
     try:
-        with open(Applicationstate.history[Applicationstate.history_index], 'r') as f:
+        with open(Applicationstate.history[Applicationstate.history_index][0], 'r') as f:
             Applicationstate.p_text = f.read()
         Applicationstate.start_position = 0
         Applicationstate.current_link = -1
+        change_history_container()
         return
     except:
         pass
@@ -77,13 +93,14 @@ def go_back_history(event):
 @bindings.add('right')
 def go_back_history(event):
     Applicationstate.urls = {}
-    if Applicationstate.history_index < len(Applicationstate.history):
+    if Applicationstate.history_index < len(Applicationstate.history)-1:
         Applicationstate.history_index += 1
     try:
-        with open(Applicationstate.history[Applicationstate.history_index], 'r') as f:
+        with open(Applicationstate.history[Applicationstate.history_index][0], 'r') as f:
             Applicationstate.p_text = f.read()
         Applicationstate.start_position = 0
         Applicationstate.current_link = -1
+        change_history_container()
         return
     except:
         pass
@@ -143,7 +160,7 @@ def exit_(event):
 def link_after(event):
     if Applicationstate.current_link < len(list(Applicationstate.urls))-1:
         Applicationstate.current_link += 1
-        Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+        #Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
         Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
     if len(list(Applicationstate.urls)) == 1:
         Applicationstate.start_position = Applicationstate.line_link_number[0] - 1
@@ -170,6 +187,7 @@ def link_before(event):
 @bindings.add('enter')
 def enter_link(event):
     link_ = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+    link_name = list(Applicationstate.urls)[Applicationstate.current_link]
     if (link_.endswith(".md")):
         Applicationstate.urls = {}
         Applicationstate.history_index += 1
@@ -178,7 +196,9 @@ def enter_link(event):
                 Applicationstate.p_text = f.read()
             Applicationstate.start_position = 0
             Applicationstate.current_link = -1
-            Applicationstate.history.append(link_)
+            tup = (link_, link_name)
+            Applicationstate.history.append(tup)
+            change_history_container()
             return
         except:
             pass
@@ -234,7 +254,7 @@ def mdt(text, theme, i, col=None, rmargin=0):
 
     with open(text, 'r') as f:
         Applicationstate.p_text = f.read()
-    Applicationstate.history.append(text)
+    Applicationstate.history.append((text, text))
     Applicationstate.max_h = len(Applicationstate.rendered.split("\n"))
     Applicationstate.col = col
     Applicationstate.rmargin = rmargin
@@ -251,7 +271,7 @@ def mdt(text, theme, i, col=None, rmargin=0):
         [
             wind1,
 
-            TextArea('Tab to choose link:', focusable=False),
+            TextArea(Applicationstate.history_template.format(Applicationstate.file_backwards, Applicationstate.file_forward), focusable=False),
         ])
     Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
                                        before_render=wrap_text)
