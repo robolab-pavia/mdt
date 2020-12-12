@@ -108,12 +108,12 @@ def get_down(event):
         Applicationstate.start_position += 1
 
 # go to the beginning of the file
-@bindings.add('u')
+@bindings.add('home')
 def beginning_of_file(event):
     Applicationstate.start_position = 0
 
 # go to the end of the file
-@bindings.add('e')
+@bindings.add('end')
 def end_of_file(event):
     Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - Applicationstate.app.renderer.output.get_size()[0]
 
@@ -124,7 +124,7 @@ def get_up(event):
         Applicationstate.start_position -= 1
 
 # page up the file
-@bindings.add('j')
+@bindings.add('pageup')
 def page_up(event):
     if Applicationstate.start_position > Applicationstate.app.renderer.output.get_size()[0]:
         Applicationstate.start_position -= Applicationstate.app.renderer.output.get_size()[0]
@@ -132,7 +132,7 @@ def page_up(event):
         Applicationstate.start_position = 0
 
 # page down the file
-@bindings.add('k')
+@bindings.add('pagedown')
 def page_down(event):
     if Applicationstate.start_position < len(Applicationstate.rendered.split('\n'))-Applicationstate.app.renderer.output.get_size()[0]:
         Applicationstate.start_position += Applicationstate.app.renderer.output.get_size()[0]
@@ -154,28 +154,30 @@ def exit_(event):
 # go to the next link
 @bindings.add('tab')
 def link_after(event):
-    if Applicationstate.current_link < len(list(Applicationstate.urls))-1:
-        Applicationstate.current_link += 1
-        #Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-        Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
-    if len(list(Applicationstate.urls)) == 1:
-        Applicationstate.start_position = Applicationstate.line_link_number[0] - 1
-    titolo = list(Applicationstate.urls)[Applicationstate.current_link]
-    link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-    Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('['+titolo+']('+link+')', '[\007'+titolo+']('+link+')')
+    if len(Applicationstate.urls) != 0:
+        if Applicationstate.current_link < len(list(Applicationstate.urls))-1:
+            Applicationstate.current_link += 1
+            #Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+            Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+        if len(list(Applicationstate.urls)) == 1:
+            Applicationstate.start_position = Applicationstate.line_link_number[0] - 1
+        titolo = list(Applicationstate.urls)[Applicationstate.current_link]
+        link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+        Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('['+titolo+']('+link+')', '[\007'+titolo+']('+link+')')
 
 
 # go to the previous link
 @bindings.add('s-tab')
 def link_before(event):
-    if Applicationstate.current_link > 0:
-        Applicationstate.current_link -= 1
-        #prendo la riga del link
-        Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
-        titolo = list(Applicationstate.urls)[Applicationstate.current_link]
-        link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-        Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
-                                                                                      '[\007' + titolo + '](' + link + ')')
+    if len(Applicationstate.urls) != 0:
+        if Applicationstate.current_link > 0:
+            Applicationstate.current_link -= 1
+            #prendo la riga del link
+            Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+            titolo = list(Applicationstate.urls)[Applicationstate.current_link]
+            link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+            Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
+                                                                                          '[\007' + titolo + '](' + link + ')')
 
 # open the choosen link
 @bindings.add('enter')

@@ -2,22 +2,12 @@
 mdt renderer for mistletoe.
 """
 
-import re
 import sys
-import textwrap
-
-import ansiwrap
 import click
 from itertools import chain
-from urllib.parse import quote
 from mistletoe.block_token import HTMLBlock
 from mistletoe.span_token import HTMLSpan
 from mistletoe.base_renderer import BaseRenderer
-if sys.version_info < (3, 4):
-    from mistletoe import _html as html
-else:
-    import html
-
 
 class MDTRenderer(BaseRenderer):
     """
@@ -33,24 +23,19 @@ class MDTRenderer(BaseRenderer):
             extras (list): allows subclasses to add even more custom tokens.
         """
         self._suppress_ptag_stack = [False]
-        super().__init__(*chain((HTMLBlock, HTMLSpan), extras))
+        super().__init__()
         # html.entities.html5 includes entitydefs not ending with ';',
         # CommonMark seems to hate them, so...
-        self._stdlib_charref = html._charref
-        _charref = re.compile(r'&(#[0-9]+;'
-                              r'|#[xX][0-9a-fA-F]+;'
-                              r'|[^\t\n\f <&#;]{1,32};)')
-        html._charref = _charref
 
     def __exit__(self, *args):
         super().__exit__(*args)
-        html._charref = self._stdlib_charref
+
 
     def render_to_plain(self, token):
         if hasattr(token, 'children'):
             inner = [self.render_to_plain(child) for child in token.children]
             return ''.join(inner)
-        return self.escape_html(token.content)
+        return token.content
 
     def render_strong(self, token):
         template = click.style(self.dix["strong"]["prefix"]+"{}"+self.dix["strong"]["suffix"],
@@ -71,7 +56,7 @@ class MDTRenderer(BaseRenderer):
                                fg=self.dix["inline_code"]["color"], bold=self.dix["inline_code"]["bold"],
                                bg=self.dix["inline_code"]["background_color"], underline=self.dix["inline_code"]["underline"],
                                blink=self.dix["inline_code"]["blink"])
-        inner = html.escape(token.children[0].content)
+        inner = token.children[0].content
         return template.format(inner)
 
     def render_strikethrough(self, token):
@@ -84,7 +69,7 @@ class MDTRenderer(BaseRenderer):
         return template.format(self.render_inner(token))
 
     def render_link(self, token):
-        target = self.escape_url(token.target)
+        target = token.target
         inner = self.render_inner(token)
         if inner.startswith('\007'):
             inner = inner.replace('\007', '')
@@ -103,25 +88,6 @@ class MDTRenderer(BaseRenderer):
                                    )
         self.global_ref.update({inner: target})
         return template.format(target=target, inner=inner)
-
-    def render_auto_link(self, token):
-        template = '"{target}">{inner}'
-        if token.mailto:
-            target = 'mailto:{}'.format(token.target)
-        else:
-            target = self.escape_url(token.target)
-        inner = self.render_inner(token)
-        return template.format(target=target, inner=inner)
-
-    def render_escape_sequence(self, token):
-        return self.render_inner(token)
-
-    def render_raw_text(self, token):
-        return self.escape_html(token.content)
-
-    @staticmethod
-    def render_html_span(token):
-        return token.content
 
     def render_heading(self, token):
         key = "h" + str(token.level)
@@ -159,18 +125,15 @@ class MDTRenderer(BaseRenderer):
                            )
 
     def render_block_code(self, token):
-        template = '{attr}>{inner}'
-        if token.language:
-            attr = ' class="{}"'.format('language-{}'.format(self.escape_html(token.language)))
-        else:
-            attr = ''
-        inner = html.escape(token.children[0].content)
-        return template.format(attr=attr, inner=inner)
+        template = '{}'
+        inner = "\n".join([self.dix["inline_code"]["prefix"]+x if x != "" else x for x in token.children[0].content.split("\n")])
+        inner += self.dix["inline_code"]["suffix"]
+        return template.format(inner)
 
     def render_list(self, token):
         template = '{}'
         self._suppress_ptag_stack.append(not token.loose)
-        inner = ''.join([self.render(child) for child in token.children])
+        inner = '\n'.join([self.render(child) for child in token.children])
         self._suppress_ptag_stack.pop()
         return template.format(inner)
 
@@ -183,28 +146,24 @@ class MDTRenderer(BaseRenderer):
 
     @staticmethod
     def render_thematic_break(token):
-        return '<hr />'
+        return '---'
 
     @staticmethod
     def render_line_break(token):
-        return '\n' if token.soft else '<br />\n'
-
-    @staticmethod
-    def render_html_block(token):
-        return token.content
+        return '\n' if token.soft else '\n'
 
     def render_document(self, token):
         self.footnotes.update(token.footnotes)
         inner = '\n'.join([self.render(child) for child in token.children])
         return '{}\n'.format(inner) if inner else ''
 
-    @staticmethod
-    def escape_html(raw):
-        return html.escape(html.unescape(raw)).replace('&#x27;', "'")
 
-    @staticmethod
-    def escape_url(raw):
-        """
-        Escape urls to prevent code injection craziness. (Hopefully.)
-        """
-        return html.escape(quote(html.unescape(raw), safe='/#:()*?=%@+,&'))
+
+
+
+
+
+
+
+
+

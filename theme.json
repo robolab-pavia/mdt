@@ -135,12 +135,12 @@
     "blink": false
   },
     "inline_code": {
-    "prefix": "",
+    "prefix": ">",
     "suffix": "",
     "color": "",
     "background_color": "",
-    "bold": true,
-    "underline": true,
+    "bold": false,
+    "underline": false,
     "blink": false
     }
 }
