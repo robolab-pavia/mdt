@@ -5,6 +5,7 @@ setup(
     version='0.1',
     py_modules=['mdt_parser'],
     install_requires=[
+        'ansiwrap',
         'Click',
         'Mistletoe',
         'prompt_toolkit',
