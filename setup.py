@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='mdt_parser',
     version='0.1',
-    py_modules=['mdt_parser'],
+    py_modules=['mdt_parser', 'mdt_render', 'plain_render'],
     install_requires=[
         'ansiwrap',
         'Click',
