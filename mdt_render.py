@@ -124,44 +124,17 @@ class MDTRenderer(BaseRenderer):
         return token.content
 
     def render_heading(self, token):
-        if token.level == 1:
-            template = click.style(self.dix["h1"]["prefix"]+'{inner}'+self.dix["h1"]["suffix"],
-                                   fg=self.dix["h1"]["color"], bold=self.dix["h1"]["bold"],
-                                   bg=self.dix["h1"]["background_color"], underline=self.dix["h1"]["underline"],
-                                   blink=self.dix["h1"]["blink"]
-                                   )
-        elif token.level == 2:
-            template = click.style(self.dix["h2"]["prefix"] + '{inner}' + self.dix["h2"]["suffix"],
-                                   fg=self.dix["h2"]["color"], bold=self.dix["h2"]["bold"],
-                                   bg=self.dix["h2"]["background_color"], underline=self.dix["h2"]["underline"],
-                                   blink=self.dix["h2"]["blink"]
-                                   )
-        elif token.level == 3:
-            template = click.style(self.dix["h3"]["prefix"] + '{inner}' + self.dix["h3"]["suffix"],
-                                   fg=self.dix["h3"]["color"], bold=self.dix["h3"]["bold"],
-                                   bg=self.dix["h3"]["background_color"], underline=self.dix["h3"]["underline"],
-                                   blink=self.dix["h3"]["blink"]
-                                   )
-        elif token.level == 4:
-            template = click.style(self.dix["h4"]["prefix"] + '{inner}' + self.dix["h4"]["suffix"],
-                                   fg=self.dix["h4"]["color"], bold=self.dix["h4"]["bold"],
-                                   bg=self.dix["h4"]["background_color"], underline=self.dix["h4"]["underline"],
-                                   blink=self.dix["h4"]["blink"]
-                                   )
-        elif token.level == 5:
-            template = click.style(self.dix["h5"]["prefix"] + '{inner}' + self.dix["h5"]["suffix"],
-                                   fg=self.dix["h5"]["color"], bold=self.dix["h5"]["bold"],
-                                   bg=self.dix["h5"]["background_color"], underline=self.dix["h5"]["underline"],
-                                   blink=self.dix["h5"]["blink"]
-                                   )
-        elif token.level == 6:
-            template = click.style(self.dix["h6"]["prefix"] + '{inner}' + self.dix["h6"]["suffix"],
-                                   fg=self.dix["h6"]["color"], bold=self.dix["h6"]["bold"],
-                                   bg=self.dix["h6"]["background_color"], underline=self.dix["h6"]["underline"],
-                                   blink=self.dix["h6"]["blink"]
-                                   )
+        key = "h" + str(token.level)
+        pre = self.dix["heading"]["prefix"] if self.dix[key]["prefix"] == "" else self.dix[key]["prefix"]
+        col = self.dix["heading"]["color"] if self.dix[key]["color"] == "" else self.dix[key]["color"]
+        suf = self.dix["heading"]["suffix"] if self.dix[key]["suffix"] == "" else self.dix[key]["suffix"]
+        bold = self.dix["heading"]["bold"] if self.dix[key]["bold"] == "" else self.dix[key]["bold"]
+        back = self.dix["heading"]["background_color"] if self.dix[key]["background_color"] == "" else self.dix[key]["background_color"]
+        under = self.dix["heading"]["underline"] if self.dix[key]["underline"] == "" else self.dix[key]["underline"]
+        blink = self.dix["heading"]["blink"] if self.dix[key]["blink"] == "" else self.dix[key]["blink"]
+        template = click.style(pre + "{inner}" + suf, bg=back, bold=bold, fg=col, underline=under, blink=blink)
         inner = self.render_inner(token)
-        return template.format(level=token.level, inner=inner)
+        return template.format(inner=inner)
 
     def render_quote(self, token):
         elements = [""]
