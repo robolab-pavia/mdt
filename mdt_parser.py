@@ -174,8 +174,6 @@ def link_after(event):
 def link_before(event):
     if Applicationstate.current_link > 0:
         Applicationstate.current_link -= 1
-        Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[
-            list(Applicationstate.urls)[Applicationstate.current_link]]
         #prendo la riga del link
         Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
         titolo = list(Applicationstate.urls)[Applicationstate.current_link]
