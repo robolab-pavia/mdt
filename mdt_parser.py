@@ -1,13 +1,9 @@
 import json
 import textwrap
 import webbrowser
-
 import ansiwrap
 from prompt_toolkit.widgets import TextArea
-from plain_render import Plain_Renderer
 import click
-import re
-from prompt_toolkit.data_structures import Point
 from prompt_toolkit import Application, HTML, print_formatted_text, ANSI
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout.containers import Window, HSplit
