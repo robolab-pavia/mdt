@@ -135,7 +135,7 @@
     "blink": false
   },
     "inline_code": {
-    "prefix": ">",
+    "prefix": "",
     "suffix": "",
     "color": "blue",
     "background_color": "",
@@ -144,7 +144,7 @@
     "blink": false
     },
   "block_code": {
-    "prefix": ">",
+    "prefix": "> ",
     "suffix": "",
     "color": "blue",
     "background_color": "",
