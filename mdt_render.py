@@ -52,7 +52,7 @@ class MDTRenderer(BaseRenderer):
         return template.format(self.render_inner(token))
 
     def render_inline_code(self, token):
-        template =  click.style(self.dix["inline_code"]["prefix"] + "{}" + self.dix["inline_code"]["suffix"],
+        template = click.style(self.dix["inline_code"]["prefix"] + "{}" + self.dix["inline_code"]["suffix"],
                                fg=self.dix["inline_code"]["color"], bold=self.dix["inline_code"]["bold"],
                                bg=self.dix["inline_code"]["background_color"], underline=self.dix["inline_code"]["underline"],
                                blink=self.dix["inline_code"]["blink"])
@@ -109,9 +109,9 @@ class MDTRenderer(BaseRenderer):
         self._suppress_ptag_stack.pop()
         elements.append("")
         return click.style(self.dix["block_quote"]["prefix"]+''.join(elements)+self.dix["block_quote"]["suffix"],
-                           fg=self.dix["h6"]["color"], bold=self.dix["h6"]["bold"],
-                           bg=self.dix["h6"]["background_color"], underline=self.dix["h6"]["underline"],
-                           blink=self.dix["h6"]["blink"]
+                           fg=self.dix["block_quote"]["color"], bold=self.dix["block_quote"]["bold"],
+                           bg=self.dix["block_quote"]["background_color"], underline=self.dix["block_quote"]["underline"],
+                           blink=self.dix["block_quote"]["blink"]
                            )
 
 
@@ -126,8 +126,9 @@ class MDTRenderer(BaseRenderer):
 
     def render_block_code(self, token):
         template = '{}'
-        inner = "\n".join([self.dix["inline_code"]["prefix"]+x if x != "" else x for x in token.children[0].content.split("\n")])
-        inner += self.dix["inline_code"]["suffix"]
+        inner = "\n".join([click.style(self.dix["block_code"]["prefix"]+x+self.dix["block_code"]["suffix"], fg=self.dix["block_code"]["color"], bold=self.dix["block_code"]["bold"],
+                           bg=self.dix["block_code"]["background_color"], underline=self.dix["block_code"]["underline"],
+                           blink=self.dix["block_code"]["blink"]) if x != "" else x for x in token.children[0].content.split("\n")])
         return template.format(inner)
 
     def render_list(self, token):
@@ -141,7 +142,6 @@ class MDTRenderer(BaseRenderer):
         if len(token.children) == 0:
             return ''
         inner = self.dix["item"]["prefix"]+''.join([self.render(child) for child in token.children])+self.dix["item"]["suffix"]
-        inner_template = self.dix["item"]["prefix"]+"{}"+self.dix["item"]["suffix"]
         return '{}'.format(inner)
 
     @staticmethod

@@ -238,16 +238,33 @@ def wrap_text(app):
 # main
 @click.command()
 @click.argument('text', required=True)
-@click.option('--theme', default=0, help='theme you want to use')
+@click.option('--theme', default=0, help='choose one of the default themes')
+@click.option('-theme_file', help='choose a theme file')
 @click.option('-i', help='Interactive mode', is_flag=True)
 @click.option('-col', help='Choose the last column width', type=int)
 @click.option('-rmargin', help='Right margin', type=int, default=0)
-def mdt(text, theme, i, col=None, rmargin=0):
+def mdt(text, theme, i, col=None, rmargin=0, theme_file=None):
     if col != None and rmargin != 0:
-        raise Exception("You can't put -col and -rmargin attribute!")
+        try:
+            raise Exception("You can't put -col and -rmargin attribute!")
+        except Exception as e:
+            print(e)
+            exit(1)
+    theme_ = None
+    if theme_file == None:
+        theme_ = 'theme.json'
+    else:
+        theme_ = theme_file
 
-    with open('theme.json') as j:
+    with open(theme_) as j:
         Applicationstate.custom_themes = json.load(j)
+    if theme > len(Applicationstate.custom_themes)-1:
+        try:
+            raise Exception("there are just 2 themes!")
+        except Exception as e:
+            print(e)
+            exit(1)
+    Applicationstate.custom_themes = Applicationstate.custom_themes[theme]
 
     with open(text, 'r') as f:
         Applicationstate.p_text = f.read()

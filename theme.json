@@ -1,3 +1,158 @@
+[{
+  "document": {
+    "prefix": "",
+    "suffix": "",
+    "margin": 2
+  },
+  "block_quote": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "paragraph": {
+    "prefix": "",
+    "suffix": "\n",
+    "color": "",
+    "background_color": "",
+    "bold": false,
+    "underline": false,
+    "blink": false
+  },
+  "heading": {
+    "prefix": "# ",
+    "suffix": "",
+    "color": "blue",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+  },
+  "h1": {
+    "prefix": "# ",
+    "suffix": "",
+    "color": "red",
+    "background_color": "white",
+    "bold": "",
+    "underline": false,
+    "blink": false
+  },
+  "h2": {
+    "prefix": "## ",
+    "suffix": " ",
+    "color": "white",
+    "background_color": "red",
+    "bold": "",
+    "underline": false,
+    "blink": false
+  },
+  "h3": {
+    "prefix": "### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": "",
+    "underline": false,
+    "blink": false
+  },
+  "h4": {
+    "prefix": "#### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": "",
+    "underline": false,
+    "blink": false
+  },
+  "h5": {
+    "prefix": "##### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": "",
+    "underline": false,
+    "blink": false
+  },
+  "h6": {
+    "prefix": "###### ",
+    "suffix": " ",
+    "color": "",
+    "background_color": "",
+    "bold": "",
+    "underline": false,
+    "blink": false
+  },
+  "strikethrough": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": false,
+    "underline": false,
+    "blink": false
+  },
+  "emph": {
+    "color": "cyan",
+    "background_color": "",
+    "underline": false,
+    "blink": false,
+    "prefix": "",
+    "suffix": "",
+    "bold": false
+  },
+  "strong": {
+    "color": "black",
+    "background_color": "",
+    "underline": false,
+    "blink": false,
+    "prefix": "",
+    "suffix": "",
+    "bold": true
+  },
+  "item": {
+    "prefix": "• ",
+    "suffix": ""
+  },
+  "link": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "",
+    "bold": true,
+    "underline": true,
+    "blink": false
+  },
+  "choosen_link": {
+    "prefix": "",
+    "suffix": "",
+    "color": "",
+    "background_color": "white",
+    "bold": true,
+    "underline": true,
+    "blink": false
+  },
+    "inline_code": {
+    "prefix": ">",
+    "suffix": "",
+    "color": "blue",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+    },
+  "block_code": {
+    "prefix": ">",
+    "suffix": "",
+    "color": "blue",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+    }
+},
 {
   "document": {
     "prefix": "",
@@ -25,7 +180,7 @@
   "heading": {
     "prefix": "# ",
     "suffix": "",
-    "color": "",
+    "color": "blue",
     "background_color": "",
     "bold": true,
     "underline": false,
@@ -34,8 +189,8 @@
   "h1": {
     "prefix": "# ",
     "suffix": "",
-    "color": "",
-    "background_color": "",
+    "color": "black",
+    "background_color": "yellow",
     "bold": "",
     "underline": false,
     "blink": false
@@ -43,7 +198,7 @@
   "h2": {
     "prefix": "## ",
     "suffix": " ",
-    "color": "",
+    "color": "green",
     "background_color": "",
     "bold": "",
     "underline": false,
@@ -95,7 +250,7 @@
     "blink": false
   },
   "emph": {
-    "color": "",
+    "color": "cyan",
     "background_color": "",
     "underline": false,
     "blink": false,
@@ -104,7 +259,7 @@
     "bold": false
   },
   "strong": {
-    "color": "",
+    "color": "black",
     "background_color": "",
     "underline": false,
     "blink": false,
@@ -119,7 +274,7 @@
   "link": {
     "prefix": "",
     "suffix": "",
-    "color": "",
+    "color": "cyan",
     "background_color": "",
     "bold": true,
     "underline": true,
@@ -135,12 +290,21 @@
     "blink": false
   },
     "inline_code": {
+    "prefix": "",
+    "suffix": "",
+    "color": "blue",
+    "background_color": "",
+    "bold": true,
+    "underline": false,
+    "blink": false
+    },
+  "block_code": {
     "prefix": ">",
     "suffix": "",
-    "color": "",
+    "color": "blue",
     "background_color": "",
-    "bold": false,
+    "bold": true,
     "underline": false,
     "blink": false
     }
-}
+}]
