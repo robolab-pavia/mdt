@@ -2,11 +2,7 @@
 mdt renderer for mistletoe.
 """
 
-import sys
 import click
-from itertools import chain
-from mistletoe.block_token import HTMLBlock
-from mistletoe.span_token import HTMLSpan
 from mistletoe.base_renderer import BaseRenderer
 
 class MDTRenderer(BaseRenderer):
@@ -146,7 +142,7 @@ class MDTRenderer(BaseRenderer):
 
     @staticmethod
     def render_thematic_break(token):
-        return '---'
+        return '----------------------'
 
     @staticmethod
     def render_line_break(token):

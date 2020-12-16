@@ -1,4 +1,5 @@
-[{
+
+{
   "document": {
     "prefix": "",
     "suffix": "",
@@ -9,7 +10,7 @@
     "suffix": "",
     "color": "",
     "background_color": "",
-    "bold": true,
+    "bold": false,
     "underline": false,
     "blink": false
   },
@@ -34,8 +35,8 @@
   "h1": {
     "prefix": "# ",
     "suffix": "",
-    "color": "red",
-    "background_color": "",
+    "color": "black",
+    "background_color": "yellow",
     "bold": "",
     "underline": false,
     "blink": false
@@ -43,8 +44,8 @@
   "h2": {
     "prefix": "## ",
     "suffix": " ",
-    "color": "white",
-    "background_color": "red",
+    "color": "yellow",
+    "background_color": "black",
     "bold": "",
     "underline": false,
     "blink": false
@@ -52,8 +53,8 @@
   "h3": {
     "prefix": "### ",
     "suffix": " ",
-    "color": "",
-    "background_color": "",
+    "color": "red",
+    "background_color": "green",
     "bold": "",
     "underline": false,
     "blink": false
@@ -61,8 +62,8 @@
   "h4": {
     "prefix": "#### ",
     "suffix": " ",
-    "color": "",
-    "background_color": "",
+    "color": "green",
+    "background_color": "red",
     "bold": "",
     "underline": false,
     "blink": false
@@ -70,8 +71,8 @@
   "h5": {
     "prefix": "##### ",
     "suffix": " ",
-    "color": "",
-    "background_color": "",
+    "color": "white",
+    "background_color": "blue",
     "bold": "",
     "underline": false,
     "blink": false
@@ -79,8 +80,8 @@
   "h6": {
     "prefix": "###### ",
     "suffix": " ",
-    "color": "",
-    "background_color": "",
+    "color": "blue",
+    "background_color": "white",
     "bold": "",
     "underline": false,
     "blink": false
@@ -95,7 +96,7 @@
     "blink": false
   },
   "emph": {
-    "color": "cyan",
+    "color": "green",
     "background_color": "",
     "underline": false,
     "blink": false,
@@ -119,7 +120,7 @@
   "link": {
     "prefix": "",
     "suffix": "",
-    "color": "",
+    "color": "cyan",
     "background_color": "",
     "bold": true,
     "underline": true,
@@ -135,7 +136,7 @@
     "blink": false
   },
     "inline_code": {
-    "prefix": ">",
+    "prefix": "",
     "suffix": "",
     "color": "blue",
     "background_color": "",
@@ -152,4 +153,4 @@
     "underline": false,
     "blink": false
     }
-}]
+}

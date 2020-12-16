@@ -11,6 +11,7 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
 from mdt_render import MDTRenderer
 from mistletoe import Document
+import os
 
 # Global key bindings.
 bindings = KeyBindings()
@@ -53,12 +54,13 @@ class Applicationstate:
     history_index = 0
     file_backwards = ""
     file_forward = ""
-    history_template = 'file_backwards:"{}"  file_forward:"{}"'
+    history_template = ' mdt: {}'
     # urls vector
     urls = {}
     line_link_number = []
 
 def change_history_container():
+    '''
     if len(Applicationstate.history) > 1 and Applicationstate.history_index > 0:
         Applicationstate.file_backwards = Applicationstate.history[Applicationstate.history_index-1][1]
     if Applicationstate.history_index < len(Applicationstate.history)-1:
@@ -67,7 +69,14 @@ def change_history_container():
         Applicationstate.file_forward = ""
     if Applicationstate.history_index == 0:
         Applicationstate.file_backwards = ""
-    Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.history_template.format(Applicationstate.file_backwards, Applicationstate.file_forward)
+    '''
+    file_manager = []
+    file_manager = map(lambda x: x[1], Applicationstate.history)
+    file_manager = list(file_manager)
+    file_manager[Applicationstate.history_index] += '*'
+
+
+    Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.history_template.format(file_manager)
 
 
 #go back in file.md history
@@ -81,7 +90,6 @@ def go_back_history(event):
             Applicationstate.p_text = f.read()
         Applicationstate.start_position = 0
         Applicationstate.current_link = -1
-        change_history_container()
         return
     except:
         pass
@@ -96,7 +104,6 @@ def go_back_history(event):
             Applicationstate.p_text = f.read()
         Applicationstate.start_position = 0
         Applicationstate.current_link = -1
-        change_history_container()
         return
     except:
         pass
@@ -182,27 +189,27 @@ def link_before(event):
 # open the choosen link
 @bindings.add('enter')
 def enter_link(event):
-    link_ = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-    link_name = list(Applicationstate.urls)[Applicationstate.current_link]
-    if (link_.endswith(".md")):
-        Applicationstate.urls = {}
-        Applicationstate.history_index += 1
-        try:
-            with open(link_, 'r') as f:
-                Applicationstate.p_text = f.read()
-            Applicationstate.start_position = 0
-            Applicationstate.current_link = -1
-            tup = (link_, link_name)
-            Applicationstate.history.append(tup)
-            change_history_container()
-            return
-        except:
-            pass
-    else:
-        try:
-            webbrowser.open(Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]])
-        except:
-            pass
+    if len(Applicationstate.urls) > 0:
+        link_ = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
+        link_name = list(Applicationstate.urls)[Applicationstate.current_link]
+        if (link_.endswith(".md")):
+            Applicationstate.urls = {}
+            Applicationstate.history_index += 1
+            try:
+                with open(link_, 'r') as f:
+                    Applicationstate.p_text = f.read()
+                Applicationstate.start_position = 0
+                Applicationstate.current_link = -1
+                tup = (link_, link_name)
+                Applicationstate.history.append(tup)
+                return
+            except:
+                pass
+        else:
+            try:
+                webbrowser.open(Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]])
+            except:
+                pass
 
 # resize window every time (callable)
 def wrap_text(app):
@@ -228,6 +235,7 @@ def wrap_text(app):
         text=ANSI("\n".join(Applicationstate.rendered.split("\n")[Applicationstate.start_position:len(Applicationstate.rendered.split("\n"))])))
     Applicationstate.end_position = Applicationstate.start_position + app.renderer.output.get_size()[0]
     Applicationstate.line_link_number = []
+    change_history_container()
     for w in (list(Applicationstate.urls)):
         count = 0
         for l in Applicationstate.rendered.split("\n"):
@@ -237,38 +245,59 @@ def wrap_text(app):
 
 # main
 @click.command()
-@click.argument('text', required=True)
-@click.option('--theme', default=0, help='choose one of the default themes')
-@click.option('-theme_file', help='choose a theme file')
+@click.argument('textmd', required=True)
+@click.option('--theme', default=1, help='choose one of the default themes', type=int)
+@click.option('--theme_file', help='choose a theme file')
 @click.option('-i', help='Interactive mode', is_flag=True)
-@click.option('-col', help='Choose the last column width', type=int)
-@click.option('-rmargin', help='Right margin', type=int, default=0)
-def mdt(text, theme, i, col=None, rmargin=0, theme_file=None):
+@click.option('--col', help='Choose the last column width', type=int)
+@click.option('--rmargin', help='Right margin', type=int, default=0)
+@click.option('-l', help='list all the default themes', is_flag=True)
+@click.option('-list', help='sample of all themes', is_flag=True)
+def mdt(textmd, theme, i, l, list, col=None, rmargin=0, theme_file=None):
+
     if col != None and rmargin != 0:
         try:
             raise Exception("You can't put -col and -rmargin attribute!")
         except Exception as e:
             print(e)
             exit(1)
+
     theme_ = None
+    if col != None and col < 0:
+        try:
+            raise Exception('invalid number!')
+        except Exception as e:
+            print(e)
+            exit(1)
+
+    if theme <= 0 or rmargin < 0:
+        try:
+            raise Exception('Invalid number!')
+        except Exception as e:
+            print(e)
+            exit(1)
+
     if theme_file == None:
-        theme_ = 'theme.json'
+        theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
     else:
         theme_ = theme_file
 
-    with open(theme_) as j:
-        Applicationstate.custom_themes = json.load(j)
-    if theme > len(Applicationstate.custom_themes)-1:
+    try:
+        with open(theme_) as j:
+            Applicationstate.custom_themes = json.load(j)
+    except:
+        print("File not found!")
+        exit(1)
+    if theme > len(os.listdir('themes')):
         try:
             raise Exception("there are just 2 themes!")
         except Exception as e:
             print(e)
             exit(1)
-    Applicationstate.custom_themes = Applicationstate.custom_themes[theme]
 
-    with open(text, 'r') as f:
+    with open(textmd, 'r') as f:
         Applicationstate.p_text = f.read()
-    Applicationstate.history.append((text, text))
+    Applicationstate.history.append((textmd, textmd))
     Applicationstate.max_h = len(Applicationstate.rendered.split("\n"))
     Applicationstate.col = col
     Applicationstate.rmargin = rmargin
@@ -290,7 +319,42 @@ def mdt(text, theme, i, col=None, rmargin=0, theme_file=None):
     Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
                                        before_render=wrap_text)
     wrap_text(Applicationstate.app)
-    if i == False:
+    if list == True:
+        for elem in sorted(os.listdir('themes')):
+            theme_ = 'themes/' + elem
+            with open(theme_) as j:
+                Applicationstate.custom_themes = json.load(j)
+            with open('sample_theme_text', 'r') as f:
+                Applicationstate.p_text = f.read()
+            ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
+
+            wind1 = Window(
+                content=ftc,
+                always_hide_cursor=True,
+            )
+            wind1.vertical_scroll = 1
+
+            Applicationstate.root_container = HSplit(
+                [
+                    wind1,
+
+                    TextArea(Applicationstate.history_template.format(Applicationstate.file_backwards,
+                                                                      Applicationstate.file_forward), focusable=False),
+                ])
+            Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
+                                               before_render=wrap_text)
+            wrap_text(Applicationstate.app)
+            print(elem+'\n')
+            print_formatted_text(ANSI(Applicationstate.rendered))
+        exit(1)
+
+    if l == True:
+        styles = zip(range(1, len(os.listdir('themes'))+1), sorted(os.listdir('themes')))
+        for n, l in styles:
+            print('{} : {}'.format(n, l))
+        exit(1)
+    elif i == False:
         print_formatted_text(ANSI(Applicationstate.rendered))
+
     else:
         Applicationstate.app.run()
