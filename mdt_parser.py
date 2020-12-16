@@ -73,10 +73,11 @@ def change_history_container():
     file_manager = []
     file_manager = map(lambda x: x[1], Applicationstate.history)
     file_manager = list(file_manager)
-    file_manager[Applicationstate.history_index] += '*'
+    file_manager[Applicationstate.history_index] = '['+file_manager[Applicationstate.history_index]+']'
+    line = ' '.join(file_manager)
 
 
-    Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.history_template.format(file_manager)
+    Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.history_template.format(line)
 
 
 #go back in file.md history
