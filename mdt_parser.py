@@ -246,7 +246,7 @@ def wrap_text(app):
 
 # main
 @click.command()
-@click.argument('textmd', required=True)
+@click.argument('mdfile', required=True)
 @click.option('--theme', default=1, help='Choose a default theme by ID', type=int)
 @click.option('--theme_file', help='Choose a theme file.')
 @click.option('-i', help='Interactive mode.', is_flag=True)
@@ -254,7 +254,7 @@ def wrap_text(app):
 @click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
 @click.option('-l', help='List all the default themes', is_flag=True)
 @click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
-def mdt(textmd, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
+def mdt(mdfile, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
 
     if col != None and rmargin != 0:
         print("The options --col and --rmargin can not be used at the same time.")
@@ -285,9 +285,13 @@ def mdt(textmd, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
         print("Max ID number for the theme: {}".format(n_themes))
         exit(1)
 
-    with open(textmd, 'r') as f:
-        Applicationstate.p_text = f.read()
-    Applicationstate.history.append((textmd, textmd))
+    try:
+        with open(mdfile, 'r') as f:
+            Applicationstate.p_text = f.read()
+    except:
+        print("Markdown file {} not found.".format(mdfile))
+        exit(1)
+    Applicationstate.history.append((mdfile, mdfile))
     Applicationstate.max_h = len(Applicationstate.rendered.split("\n"))
     Applicationstate.col = col
     Applicationstate.rmargin = rmargin
