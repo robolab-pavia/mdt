@@ -253,30 +253,21 @@ def wrap_text(app):
 @click.option('--col', help='Choose the last column width', type=int)
 @click.option('--rmargin', help='Right margin', type=int, default=0)
 @click.option('-l', help='list all the default themes', is_flag=True)
-@click.option('-list', help='sample of all themes', is_flag=True)
+@click.option('--list', help='sample of all themes', is_flag=True)
 def mdt(textmd, theme, i, l, list, col=None, rmargin=0, theme_file=None):
 
     if col != None and rmargin != 0:
-        try:
-            raise Exception("You can't put -col and -rmargin attribute!")
-        except Exception as e:
-            print(e)
-            exit(1)
+        print("The options --col and --rmargin can not be used at the same time.")
+        exit(1)
 
     theme_ = None
     if col != None and col < 0:
-        try:
-            raise Exception('invalid number!')
-        except Exception as e:
-            print(e)
-            exit(1)
+        print('Invalid number of columns: {}'.format(col))
+        exit(1)
 
     if theme <= 0 or rmargin < 0:
-        try:
-            raise Exception('Invalid number!')
-        except Exception as e:
-            print(e)
-            exit(1)
+        print('Invalid rmargin: {}'.format(rmargin))
+        exit(1)
 
     if theme_file == None:
         theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
@@ -287,14 +278,12 @@ def mdt(textmd, theme, i, l, list, col=None, rmargin=0, theme_file=None):
         with open(theme_) as j:
             Applicationstate.custom_themes = json.load(j)
     except:
-        print("File not found!")
+        print("Theme file {} not found.".format(theme_))
         exit(1)
-    if theme > len(os.listdir('themes')):
-        try:
-            raise Exception("there are just 2 themes!")
-        except Exception as e:
-            print(e)
-            exit(1)
+    n_themes = len(os.listdir('themes'))
+    if theme > n_themes:
+        print("Max ID number for the theme: {}".format(n_themes))
+        exit(1)
 
     with open(textmd, 'r') as f:
         Applicationstate.p_text = f.read()
