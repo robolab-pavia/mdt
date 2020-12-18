@@ -29,7 +29,7 @@ This project is a markdown file reader from your terminal.
 
 * Interactive mode with dynamic adaptiation to the terminal width.
 * You can choose your favourite among some available themes.
-* You can edit a them of add your own custom theme. Themes are deined with a simple JSON "CSS-like" format.
+* You can edit a them of add your own custom theme. Themes are defined with a simple JSON "CSS-like" format.
 * Intelligent word wrapping.
 
 In interactive mode you can:
