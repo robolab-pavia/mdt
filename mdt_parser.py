@@ -318,7 +318,7 @@ def mdt(mdfile, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
             theme_ = 'themes/' + elem
             with open(theme_) as j:
                 Applicationstate.custom_themes = json.load(j)
-            with open('sample_theme_text', 'r') as f:
+            with open('sample_theme_text.md', 'r') as f:
                 Applicationstate.p_text = f.read()
             ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
 
