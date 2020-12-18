@@ -24,7 +24,7 @@
   },
   "heading": {
     "prefix": "# ",
-    "suffix": "",
+    "suffix": "\n",
     "color": "",
     "background_color": "",
     "bold": true,
@@ -33,7 +33,7 @@
   },
   "h1": {
     "prefix": "# ",
-    "suffix": "",
+    "suffix": "\n",
     "color": "red",
     "background_color": "",
     "bold": "",
@@ -42,7 +42,7 @@
   },
   "h2": {
     "prefix": "## ",
-    "suffix": " ",
+    "suffix": "\n",
     "color": "green",
     "background_color": "",
     "bold": "",
@@ -51,7 +51,7 @@
   },
   "h3": {
     "prefix": "### ",
-    "suffix": " ",
+    "suffix": "\n",
     "color": "blue",
     "background_color": "",
     "bold": "",
@@ -60,7 +60,7 @@
   },
   "h4": {
     "prefix": "#### ",
-    "suffix": " ",
+    "suffix": "\n",
     "color": "black",
     "background_color": "",
     "bold": "",
@@ -69,7 +69,7 @@
   },
   "h5": {
     "prefix": "##### ",
-    "suffix": " ",
+    "suffix": "\n",
     "color": "white",
     "background_color": "",
     "bold": "",
@@ -78,7 +78,7 @@
   },
   "h6": {
     "prefix": "###### ",
-    "suffix": " ",
+    "suffix": "\n",
     "color": "cyan",
     "background_color": "",
     "bold": "",
