@@ -14,23 +14,25 @@ If you want to play with Markdown, you can edit me. Once you have finished with 
 
 ## Project
 
-This project want to be a markdown file reader from your terminal, it aim to be **as customizable as possible**.
-**MDT** was built with `python`.
+This project is a markdown file reader from your terminal.
 
-## Options
+`mdt` is built with Python, and uses the following libraries:
 
-Sample link: [UNIPV Robolab](https://robot.unipv.it/)
+* [Mistletoe](https://github.com/miyuchina/mistletoe) to parse Markdown files.
+* [Python Prompt Toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) for the interactive mode.
+* [Click](https://click.palletsprojects.com/en/7.x/) to handle commmand line parameters.
+* [ansiwrap](https://pypi.org/project/ansiwrap/) to perform the word wrapping.
+
+## Features
 
 `mdt` has the following features:
 
-- Interactive mode with dinamic change over window size
+* Interactive mode with dynamic adaptiation to the terminal width.
+* You can choose your favourite among some available themes.
+* You can edit a them of add your own custom theme. Themes are deined with a simple JSON "CSS-like" format.
+* Intelligent word wrapping.
 
-- You can choose the theme you like the best from the default themes
+* Interactive mode you can:
 
-- You can add your own custom theme! 
- 
-- Pick a template of a theme and _enjoy yourself_ changing whatever you want!
-
-- You can *browse* between the link with tab and shift-tab, and run them on your default browser.
-
-- You can even *open other md files* and browse between them thanks to the integrated file manager.
+* Open web links in the default *browser* (requires a graphic sessions to work).
+* Follow links to local files forward and backward, allowing a convenient exploration of "wiki-style" files.
