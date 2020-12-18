@@ -247,13 +247,13 @@ def wrap_text(app):
 # main
 @click.command()
 @click.argument('mdfile', required=True)
+@click.option('-i', help='Interactive mode.', is_flag=True)
+@click.option('-l', help='List all the default themes', is_flag=True)
+@click.option('--col', help='Set the text width in number of columns.', type=int)
+@click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
+@click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
 @click.option('--theme', default=1, help='Choose a default theme by ID', type=int)
 @click.option('--theme_file', help='Choose a theme file.')
-@click.option('-i', help='Interactive mode.', is_flag=True)
-@click.option('--col', help='Set the text width in number of columns.', type=int)
-@click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
-@click.option('-l', help='List all the default themes', is_flag=True)
-@click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
 def mdt(mdfile, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
 
     if col != None and rmargin != 0:
