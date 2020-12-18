@@ -247,14 +247,14 @@ def wrap_text(app):
 # main
 @click.command()
 @click.argument('textmd', required=True)
-@click.option('--theme', default=1, help='choose one of the default themes', type=int)
-@click.option('--theme_file', help='choose a theme file')
-@click.option('-i', help='Interactive mode', is_flag=True)
-@click.option('--col', help='Choose the last column width', type=int)
-@click.option('--rmargin', help='Right margin', type=int, default=0)
-@click.option('-l', help='list all the default themes', is_flag=True)
-@click.option('--list', help='sample of all themes', is_flag=True)
-def mdt(textmd, theme, i, l, list, col=None, rmargin=0, theme_file=None):
+@click.option('--theme', default=1, help='Choose a default theme by ID', type=int)
+@click.option('--theme_file', help='Choose a theme file.')
+@click.option('-i', help='Interactive mode.', is_flag=True)
+@click.option('--col', help='Set the text width in number of columns.', type=int)
+@click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
+@click.option('-l', help='List all the default themes', is_flag=True)
+@click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
+def mdt(textmd, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
 
     if col != None and rmargin != 0:
         print("The options --col and --rmargin can not be used at the same time.")
@@ -309,7 +309,7 @@ def mdt(textmd, theme, i, l, list, col=None, rmargin=0, theme_file=None):
     Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
                                        before_render=wrap_text)
     wrap_text(Applicationstate.app)
-    if list == True:
+    if gallery == True:
         for elem in sorted(os.listdir('themes')):
             theme_ = 'themes/' + elem
             with open(theme_) as j:
