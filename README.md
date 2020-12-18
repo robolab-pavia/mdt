@@ -32,7 +32,7 @@ This project is a markdown file reader from your terminal.
 * You can edit a them of add your own custom theme. Themes are deined with a simple JSON "CSS-like" format.
 * Intelligent word wrapping.
 
-* Interactive mode you can:
+In interactive mode you can:
 
 * Open web links in the default *browser* (requires a graphic sessions to work).
 * Follow links to local files forward and backward, allowing a convenient exploration of "wiki-style" files.
