@@ -27,7 +27,7 @@ class Applicationstate:
 
     #margin
     col = None
-    rmargin = None
+    rmargin = 0
 
     # reference text
     plain_text_ = ""
@@ -244,58 +244,43 @@ def wrap_text(app):
             if w in l:
                 Applicationstate.line_link_number.append(count)
 
-# main
-@click.command()
-@click.argument('mdfile', required=True)
-@click.option('-i', help='Interactive mode.', is_flag=True)
-@click.option('-l', help='List all the default themes.', is_flag=True)
-@click.option('--col', help='Set the text width in number of columns.', type=int)
-@click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
-@click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
-@click.option('--theme', default=1, help='Choose a default theme by ID.', type=int)
-@click.option('--theme_file', help='Choose a theme file.')
-def mdt(mdfile, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
-
-    if col != None and rmargin != 0:
-        print("The options --col and --rmargin can not be used at the same time.")
-        exit(1)
-
-    theme_ = None
-    if col != None and col < 0:
-        print('Invalid number of columns: {}'.format(col))
-        exit(1)
-
-    if theme <= 0 or rmargin < 0:
-        print('Invalid rmargin: {}'.format(rmargin))
-        exit(1)
-
-    if theme_file == None:
-        theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
-    else:
-        theme_ = theme_file
-
-    try:
+def show_gallery():
+    Applicationstate.history.append(('', ''))
+    for elem in sorted(os.listdir('themes')):
+        theme_ = 'themes/' + elem
         with open(theme_) as j:
             Applicationstate.custom_themes = json.load(j)
-    except:
-        print("Theme file {} not found.".format(theme_))
-        exit(1)
-    n_themes = len(os.listdir('themes'))
-    if theme > n_themes:
-        print("Max ID number for the theme: {}".format(n_themes))
-        exit(1)
-
-    try:
-        with open(mdfile, 'r') as f:
+        with open('sample_theme_text.md', 'r') as f:
             Applicationstate.p_text = f.read()
-    except:
-        print("Markdown file {} not found.".format(mdfile))
-        exit(1)
-    Applicationstate.history.append((mdfile, mdfile))
-    Applicationstate.max_h = len(Applicationstate.rendered.split("\n"))
-    Applicationstate.col = col
-    Applicationstate.rmargin = rmargin
+        ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
 
+        wind1 = Window(
+            content=ftc,
+            always_hide_cursor=True,
+        )
+        wind1.vertical_scroll = 1
+
+        Applicationstate.root_container = HSplit(
+            [
+                wind1,
+
+                TextArea(Applicationstate.history_template.format(Applicationstate.file_backwards,
+                                                                  Applicationstate.file_forward), focusable=False),
+            ])
+        Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
+                                           before_render=wrap_text)
+        wrap_text(Applicationstate.app)
+        print(elem+'\n')
+        print_formatted_text(ANSI(Applicationstate.rendered))
+
+
+def show_theme_list():
+    styles = zip(range(1, len(os.listdir('themes'))+1), sorted(os.listdir('themes')))
+    for n, l in styles:
+        print('{} : {}'.format(n, l))
+
+
+def run(interactive):
     ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
 
     wind1 = Window(
@@ -313,42 +298,81 @@ def mdt(mdfile, theme, i, l, gallery, col=None, rmargin=0, theme_file=None):
     Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
                                        before_render=wrap_text)
     wrap_text(Applicationstate.app)
-    if gallery == True:
-        for elem in sorted(os.listdir('themes')):
-            theme_ = 'themes/' + elem
-            with open(theme_) as j:
-                Applicationstate.custom_themes = json.load(j)
-            with open('sample_theme_text.md', 'r') as f:
-                Applicationstate.p_text = f.read()
-            ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
-
-            wind1 = Window(
-                content=ftc,
-                always_hide_cursor=True,
-            )
-            wind1.vertical_scroll = 1
-
-            Applicationstate.root_container = HSplit(
-                [
-                    wind1,
-
-                    TextArea(Applicationstate.history_template.format(Applicationstate.file_backwards,
-                                                                      Applicationstate.file_forward), focusable=False),
-                ])
-            Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
-                                               before_render=wrap_text)
-            wrap_text(Applicationstate.app)
-            print(elem+'\n')
-            print_formatted_text(ANSI(Applicationstate.rendered))
-        exit(1)
-
-    if l == True:
-        styles = zip(range(1, len(os.listdir('themes'))+1), sorted(os.listdir('themes')))
-        for n, l in styles:
-            print('{} : {}'.format(n, l))
-        exit(1)
-    elif i == False:
+    if interactive == False:
         print_formatted_text(ANSI(Applicationstate.rendered))
-
     else:
         Applicationstate.app.run()
+
+
+@click.command()
+@click.argument('mdfile', required=False)
+@click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
+@click.option('-i', help='Interactive mode.', is_flag=True)
+@click.option('-l', help='List all the default themes.', is_flag=True)
+@click.option('--col', help='Set the text width in number of columns.', type=int)
+@click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
+@click.option('--theme', default=1, help='Choose a default theme by ID.', type=int)
+@click.option('--theme_file', help='Choose a theme file.')
+def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
+    """Main function."""
+    if col != None and rmargin != 0:
+        print("The options --col and --rmargin can not be used at the same time.")
+        exit(1)
+    if gallery == True:
+        show_gallery()
+        exit(1)
+    if l == True:
+        show_theme_list()
+        exit(1)
+    theme_ = None
+    if col != None and col < 0:
+        print('Invalid number of columns: {}'.format(col))
+        exit(1)
+
+    if theme <= 0:
+        print('Invalid theme ID: {}'.format(theme))
+        exit(1)
+    n_themes = len(os.listdir('themes'))
+    if theme > n_themes:
+        print("Max theme ID: {}".format(n_themes))
+        exit(1)
+
+    if rmargin < 0:
+        print('Invalid rmargin: {}'.format(rmargin))
+        exit(1)
+
+    if theme_file == None:
+        theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
+    else:
+        theme_ = theme_file
+
+    try:
+        with open(theme_) as j:
+            Applicationstate.custom_themes = json.load(j)
+    except:
+        print("Theme file {} not found.".format(theme_))
+        exit(1)
+    if mdfile == None:
+        print("Markdown file name required.")
+        exit(1)
+
+    try:
+        with open(mdfile, 'r') as f:
+            Applicationstate.p_text = f.read()
+    except:
+        print("Markdown file {} not found.".format(mdfile))
+        exit(1)
+    Applicationstate.history.append((mdfile, mdfile))
+    Applicationstate.max_h = len(Applicationstate.rendered.split("\n"))
+    Applicationstate.col = col
+    Applicationstate.rmargin = rmargin
+    run(i)
+
+
+
+def main():
+    mdt()
+
+
+if __name__ == '__main__':
+    main()
