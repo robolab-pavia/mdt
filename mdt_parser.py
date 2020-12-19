@@ -310,6 +310,15 @@ def check_theme_arg(ctx, param, value):
     n_themes = len(os.listdir('themes'))
     if value > n_themes:
         raise click.BadParameter("required theme ID in [1..{}], given {}".format(n_themes, value))
+    return value
+
+
+def check_col_arg(ctx, param, value):
+    if value is None:
+        return value
+    if value <= 0:
+        raise click.BadParameter('non-positive value {}'.format(value))
+    return value
 
 
 @click.command()
@@ -317,7 +326,7 @@ def check_theme_arg(ctx, param, value):
 @click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
 @click.option('-i', help='Interactive mode.', is_flag=True)
 @click.option('-l', help='List all the default themes.', is_flag=True)
-@click.option('--col', help='Set the text width in number of columns.', type=int)
+@click.option('--col', callback=check_col_arg, help='Set the text width in number of columns.', type=int)
 @click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
 @click.option('--theme', default=1, callback=check_theme_arg, help='Choose a default theme by ID.', type=int)
 @click.option('--theme-file', help='Choose a theme file.')
@@ -332,10 +341,6 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
     if l == True:
         show_theme_list()
         exit(1)
-    if col != None and col < 0:
-        print('Invalid number of columns: {}'.format(col))
-        exit(1)
-
     if rmargin < 0:
         print('Invalid rmargin: {}'.format(rmargin))
         exit(1)
@@ -367,7 +372,6 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
     Applicationstate.col = col
     Applicationstate.rmargin = rmargin
     run(i)
-
 
 
 def main():
