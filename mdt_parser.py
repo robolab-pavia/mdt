@@ -27,7 +27,7 @@ class Applicationstate:
 
     #margin
     col = None
-    rmargin = None
+    rmargin = 0
 
     # reference text
     plain_text_ = ""
