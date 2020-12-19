@@ -72,7 +72,7 @@ def change_history_container():
 
 @bindings.add('left')
 def go_back_history(event):
-    """Go back in file.md history."""
+    """Go back to the previous file in the history."""
     Applicationstate.urls = {}
     if Applicationstate.history_index > 0:
         Applicationstate.history_index -= 1
