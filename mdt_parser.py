@@ -60,16 +60,6 @@ class Applicationstate:
     line_link_number = []
 
 def change_history_container():
-    '''
-    if len(Applicationstate.history) > 1 and Applicationstate.history_index > 0:
-        Applicationstate.file_backwards = Applicationstate.history[Applicationstate.history_index-1][1]
-    if Applicationstate.history_index < len(Applicationstate.history)-1:
-        Applicationstate.file_forward = Applicationstate.history[Applicationstate.history_index+1][1]
-    if Applicationstate.history_index == len(Applicationstate.history)-1:
-        Applicationstate.file_forward = ""
-    if Applicationstate.history_index == 0:
-        Applicationstate.file_backwards = ""
-    '''
     file_manager = []
     file_manager = map(lambda x: x[1], Applicationstate.history)
     file_manager = list(file_manager)
@@ -96,7 +86,7 @@ def go_back_history(event):
         pass
 
 @bindings.add('right')
-def go_back_history(event):
+def go_forward_history(event):
     Applicationstate.urls = {}
     if Applicationstate.history_index < len(Applicationstate.history)-1:
         Applicationstate.history_index += 1
@@ -140,9 +130,9 @@ def page_up(event):
         Applicationstate.start_position = 0
 
 # page down the file
-@bindings.add('pagedown')
+@bindings.add('d')
 def page_down(event):
-    if Applicationstate.start_position < len(Applicationstate.rendered.split('\n'))-Applicationstate.app.renderer.output.get_size()[0]:
+    if Applicationstate.start_position < len(Applicationstate.rendered.split('\n'))-2*Applicationstate.app.renderer.output.get_size()[0]:
         Applicationstate.start_position += Applicationstate.app.renderer.output.get_size()[0]
     else:
         Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - \
@@ -165,8 +155,10 @@ def link_after(event):
     if len(Applicationstate.urls) != 0:
         if Applicationstate.current_link < len(list(Applicationstate.urls))-1:
             Applicationstate.current_link += 1
-            #Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-            Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+            if Applicationstate.line_link_number[Applicationstate.current_link] - 1 + Applicationstate.app.renderer.output.get_size()[0] < len(Applicationstate.rendered.split('\n')):
+                Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+            else:
+                Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - Applicationstate.app.renderer.output.get_size()[0]
         if len(list(Applicationstate.urls)) == 1:
             Applicationstate.start_position = Applicationstate.line_link_number[0] - 1
         titolo = list(Applicationstate.urls)[Applicationstate.current_link]
@@ -181,7 +173,12 @@ def link_before(event):
         if Applicationstate.current_link > 0:
             Applicationstate.current_link -= 1
             #prendo la riga del link
-            Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+            if Applicationstate.line_link_number[Applicationstate.current_link] - 1 + \
+                    Applicationstate.app.renderer.output.get_size()[0] < len(Applicationstate.rendered.split('\n')):
+                Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+            else:
+                Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - \
+                                                  Applicationstate.app.renderer.output.get_size()[0]
             titolo = list(Applicationstate.urls)[Applicationstate.current_link]
             link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
             Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
@@ -248,13 +245,13 @@ def wrap_text(app):
 @click.command()
 @click.argument('textmd', required=True)
 @click.option('--theme', default=1, help='choose one of the default themes', type=int)
-@click.option('--theme_file', help='choose a theme file')
+@click.option('--style', help='choose a theme file')
 @click.option('-i', help='Interactive mode', is_flag=True)
 @click.option('--col', help='Choose the last column width', type=int)
 @click.option('--rmargin', help='Right margin', type=int, default=0)
 @click.option('-l', help='list all the default themes', is_flag=True)
 @click.option('-list', help='sample of all themes', is_flag=True)
-def mdt(textmd, theme, i, l, list, col=None, rmargin=0, theme_file=None):
+def mdt(textmd, theme, i, l, list, col=None, rmargin=0, style=None):
 
     if col != None and rmargin != 0:
         try:
@@ -278,10 +275,10 @@ def mdt(textmd, theme, i, l, list, col=None, rmargin=0, theme_file=None):
             print(e)
             exit(1)
 
-    if theme_file == None:
+    if style == None:
         theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
     else:
-        theme_ = theme_file
+        theme_ = style
 
     try:
         with open(theme_) as j:
