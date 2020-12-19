@@ -304,6 +304,14 @@ def run(interactive):
         Applicationstate.app.run()
 
 
+def check_theme_arg(ctx, param, value):
+    if value <= 0:
+        raise click.BadParameter('negative value {}'.format(value))
+    n_themes = len(os.listdir('themes'))
+    if value > n_themes:
+        raise click.BadParameter("required theme ID in [1..{}], given {}".format(n_themes, value))
+
+
 @click.command()
 @click.argument('mdfile', required=False)
 @click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
@@ -311,8 +319,8 @@ def run(interactive):
 @click.option('-l', help='List all the default themes.', is_flag=True)
 @click.option('--col', help='Set the text width in number of columns.', type=int)
 @click.option('--rmargin', help='Set the right right margin.', type=int, default=0)
-@click.option('--theme', default=1, help='Choose a default theme by ID.', type=int)
-@click.option('--theme_file', help='Choose a theme file.')
+@click.option('--theme', default=1, callback=check_theme_arg, help='Choose a default theme by ID.', type=int)
+@click.option('--theme-file', help='Choose a theme file.')
 def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
     """Main function."""
     if col != None and rmargin != 0:
@@ -324,26 +332,18 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
     if l == True:
         show_theme_list()
         exit(1)
-    theme_ = None
     if col != None and col < 0:
         print('Invalid number of columns: {}'.format(col))
-        exit(1)
-
-    if theme <= 0:
-        print('Invalid theme ID: {}'.format(theme))
-        exit(1)
-    n_themes = len(os.listdir('themes'))
-    if theme > n_themes:
-        print("Max theme ID: {}".format(n_themes))
         exit(1)
 
     if rmargin < 0:
         print('Invalid rmargin: {}'.format(rmargin))
         exit(1)
 
-    if theme_file == None:
+    theme_ = 'themes/' + sorted(os.listdir('themes'))[0]
+    if theme is not None:
         theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
-    else:
+    if theme_file is not None:
         theme_ = theme_file
 
     try:
