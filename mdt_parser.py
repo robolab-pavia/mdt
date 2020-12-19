@@ -130,7 +130,7 @@ def page_up(event):
         Applicationstate.start_position = 0
 
 # page down the file
-@bindings.add('d')
+@bindings.add('pagedown')
 def page_down(event):
     if Applicationstate.start_position < len(Applicationstate.rendered.split('\n'))-2*Applicationstate.app.renderer.output.get_size()[0]:
         Applicationstate.start_position += Applicationstate.app.renderer.output.get_size()[0]
