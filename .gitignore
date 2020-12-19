@@ -3,3 +3,6 @@ __pycache__
 .DS_Store
 mdt_parser.egg-info/
 venv
+*.swp
+build/
+dist/
