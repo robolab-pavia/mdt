@@ -33,35 +33,28 @@ class MDTRenderer(BaseRenderer):
             return ''.join(inner)
         return token.content
 
+    def format_inline_text(self, key):
+        template = click.style(self.dix[key]["prefix"] + "{}" + self.dix[key]["suffix"],
+                               fg=self.dix[key]["color"], bold=self.dix[key]["bold"],
+                               bg=self.dix[key]["background_color"], underline=self.dix[key]["underline"],
+                               blink=self.dix[key]["blink"])
+        return template
+
     def render_strong(self, token):
-        template = click.style(self.dix["strong"]["prefix"]+"{}"+self.dix["strong"]["suffix"],
-                               fg=self.dix["strong"]["color"], bold=self.dix["strong"]["bold"],
-                               bg=self.dix["strong"]["background_color"], underline=self.dix["strong"]["underline"],
-                               blink=self.dix["strong"]["blink"])
+        template = self.format_inline_text("strong")
         return template.format(self.render_inner(token))
 
     def render_emphasis(self, token):
-        template = click.style(self.dix["emph"]["prefix"] + "{}" + self.dix["emph"]["suffix"],
-                               fg=self.dix["emph"]["color"], bold=self.dix["emph"]["bold"],
-                               bg=self.dix["emph"]["background_color"], underline=self.dix["emph"]["underline"],
-                               blink=self.dix["emph"]["blink"])
+        template = self.format_inline_text("emph")
         return template.format(self.render_inner(token))
 
     def render_inline_code(self, token):
-        template = click.style(self.dix["inline_code"]["prefix"] + "{}" + self.dix["inline_code"]["suffix"],
-                               fg=self.dix["inline_code"]["color"], bold=self.dix["inline_code"]["bold"],
-                               bg=self.dix["inline_code"]["background_color"], underline=self.dix["inline_code"]["underline"],
-                               blink=self.dix["inline_code"]["blink"])
+        template = self.format_inline_text("inline_code")
         inner = token.children[0].content
         return template.format(inner)
 
     def render_strikethrough(self, token):
-        template = click.style(self.dix["strikethrough"]["prefix"] + "{}" + self.dix["strikethrough"]["suffix"],
-                               fg=self.dix["strikethrough"]["color"], bold=self.dix["strikethrough"]["bold"],
-                               bg=self.dix["strikethrough"]["background_color"],
-                               underline=self.dix["strikethrough"]["underline"],
-                               blink=self.dix["strikethrough"]["blink"]
-                               )
+        template = self.format_inline_text("strikethrough")
         return template.format(self.render_inner(token))
 
     def render_link(self, token):
