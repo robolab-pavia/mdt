@@ -337,10 +337,10 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
         exit(1)
     if gallery == True:
         show_gallery()
-        exit(1)
+        return
     if l == True:
         show_theme_list()
-        exit(1)
+        return
     if rmargin < 0:
         print('Invalid rmargin: {}'.format(rmargin))
         exit(1)
