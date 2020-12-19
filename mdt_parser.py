@@ -13,6 +13,7 @@ from mdt_render import MDTRenderer
 from mistletoe import Document
 import os
 
+
 # Global key bindings.
 bindings = KeyBindings()
 
@@ -59,20 +60,19 @@ class Applicationstate:
     urls = {}
     line_link_number = []
 
+
 def change_history_container():
     file_manager = []
     file_manager = map(lambda x: x[1], Applicationstate.history)
     file_manager = list(file_manager)
     file_manager[Applicationstate.history_index] = '['+file_manager[Applicationstate.history_index]+']'
     line = ' '.join(file_manager)
-
-
     Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.history_template.format(line)
 
 
-#go back in file.md history
 @bindings.add('left')
 def go_back_history(event):
+    """Go back in file.md history."""
     Applicationstate.urls = {}
     if Applicationstate.history_index > 0:
         Applicationstate.history_index -= 1
@@ -84,6 +84,7 @@ def go_back_history(event):
         return
     except:
         pass
+
 
 @bindings.add('right')
 def go_forward_history(event):
@@ -99,39 +100,42 @@ def go_forward_history(event):
     except:
         pass
 
-# scroll down the file
 @bindings.add('down')
 def get_down(event):
+    """Scroll down the file one line."""
     if Applicationstate.end_position < len(Applicationstate.rendered.split("\n")):
         Applicationstate.start_position += 1
 
-# go to the beginning of the file
+
 @bindings.add('home')
 def beginning_of_file(event):
+    """Go to the beginning of the file."""
     Applicationstate.start_position = 0
 
-# go to the end of the file
+
 @bindings.add('end')
 def end_of_file(event):
+    """Go to the end of file."""
     Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - Applicationstate.app.renderer.output.get_size()[0]
 
-# scroll up the file
 @bindings.add('up')
 def get_up(event):
+    """Scroll up the file one line."""
     if Applicationstate.start_position > 0:
         Applicationstate.start_position -= 1
 
-# page up the file
 @bindings.add('pageup')
 def page_up(event):
+    """Page up the file."""
     if Applicationstate.start_position > Applicationstate.app.renderer.output.get_size()[0]:
         Applicationstate.start_position -= Applicationstate.app.renderer.output.get_size()[0]
     else:
         Applicationstate.start_position = 0
 
-# page down the file
+
 @bindings.add('pagedown')
 def page_down(event):
+    """One page down the file."""
     if Applicationstate.start_position < len(Applicationstate.rendered.split('\n'))-2*Applicationstate.app.renderer.output.get_size()[0]:
         Applicationstate.start_position += Applicationstate.app.renderer.output.get_size()[0]
     else:
@@ -149,9 +153,10 @@ def exit_(event):
     """
     event.app.exit()
 
-# go to the next link
+
 @bindings.add('tab')
 def link_after(event):
+    """Go to the next link."""
     if len(Applicationstate.urls) != 0:
         if Applicationstate.current_link < len(list(Applicationstate.urls))-1:
             Applicationstate.current_link += 1
@@ -166,9 +171,9 @@ def link_after(event):
         Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('['+titolo+']('+link+')', '[\007'+titolo+']('+link+')')
 
 
-# go to the previous link
 @bindings.add('s-tab')
 def link_before(event):
+    """Go to the previous link."""
     if len(Applicationstate.urls) != 0:
         if Applicationstate.current_link > 0:
             Applicationstate.current_link -= 1
@@ -184,9 +189,9 @@ def link_before(event):
             Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
                                                                                           '[\007' + titolo + '](' + link + ')')
 
-# open the choosen link
 @bindings.add('enter')
 def enter_link(event):
+    """Open the selected link."""
     if len(Applicationstate.urls) > 0:
         link_ = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
         link_name = list(Applicationstate.urls)[Applicationstate.current_link]
@@ -209,8 +214,8 @@ def enter_link(event):
             except:
                 pass
 
-# resize window every time (callable)
 def wrap_text(app):
+    """Resize window every time (callable)."""
     Applicationstate.app = app
     fd = Document(Applicationstate.p_text)
     with MDTRenderer(dix=Applicationstate.custom_themes, global_ref=Applicationstate.urls, app=app) as render:
@@ -302,6 +307,7 @@ def run(interactive):
 
 
 def check_theme_arg(ctx, param, value):
+    """Callback for checking the value of the theme ID."""
     if value <= 0:
         raise click.BadParameter('negative value {}'.format(value))
     n_themes = len(os.listdir('themes'))
@@ -311,6 +317,7 @@ def check_theme_arg(ctx, param, value):
 
 
 def check_col_arg(ctx, param, value):
+    """Callback for checking the value of the columns."""
     if value is None:
         return value
     if value <= 0:
@@ -319,6 +326,7 @@ def check_col_arg(ctx, param, value):
 
 
 def check_rmargin_arg(ctx, param, value):
+    """Callback for checking the value of the right margin."""
     if value is None:
         return value
     if value < 0:
