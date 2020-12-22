@@ -1,3 +1,18 @@
+"""
+    Markdown in terminal is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Markdown in terminal is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 import json
 import textwrap
 import webbrowser
@@ -18,7 +33,7 @@ bindings = KeyBindings()
 
 
 # class for global variable
-class Applicationstate:
+class AppState:
     max_h = 0
     start_position = 0
     end_position = 0
@@ -61,40 +76,40 @@ class Applicationstate:
 
 def change_history_container():
     file_manager = []
-    file_manager = map(lambda x: x[1], Applicationstate.history)
+    file_manager = map(lambda x: x[1], AppState.history)
     file_manager = list(file_manager)
-    file_manager[Applicationstate.history_index] = '['+file_manager[Applicationstate.history_index]+']'
+    file_manager[AppState.history_index] = '[' + file_manager[AppState.history_index] + ']'
     line = ' '.join(file_manager)
 
 
-    Applicationstate.root_container.get_children()[1].content.buffer.text = Applicationstate.history_template.format(line)
+    AppState.root_container.get_children()[1].content.buffer.text = AppState.history_template.format(line)
 
 
 #go back in file.md history
 @bindings.add('left')
 def go_back_history(event):
-    Applicationstate.urls = {}
-    if Applicationstate.history_index > 0:
-        Applicationstate.history_index -= 1
+    AppState.urls = {}
+    if AppState.history_index > 0:
+        AppState.history_index -= 1
     try:
-        with open(Applicationstate.history[Applicationstate.history_index][0], 'r') as f:
-            Applicationstate.p_text = f.read()
-        Applicationstate.start_position = 0
-        Applicationstate.current_link = -1
+        with open(AppState.history[AppState.history_index][0], 'r') as f:
+            AppState.p_text = f.read()
+        AppState.start_position = 0
+        AppState.current_link = -1
         return
     except:
         pass
 
 @bindings.add('right')
 def go_forward_history(event):
-    Applicationstate.urls = {}
-    if Applicationstate.history_index < len(Applicationstate.history)-1:
-        Applicationstate.history_index += 1
+    AppState.urls = {}
+    if AppState.history_index < len(AppState.history)-1:
+        AppState.history_index += 1
     try:
-        with open(Applicationstate.history[Applicationstate.history_index][0], 'r') as f:
-            Applicationstate.p_text = f.read()
-        Applicationstate.start_position = 0
-        Applicationstate.current_link = -1
+        with open(AppState.history[AppState.history_index][0], 'r') as f:
+            AppState.p_text = f.read()
+        AppState.start_position = 0
+        AppState.current_link = -1
         return
     except:
         pass
@@ -102,41 +117,41 @@ def go_forward_history(event):
 # scroll down the file
 @bindings.add('down')
 def get_down(event):
-    if Applicationstate.end_position < len(Applicationstate.rendered.split("\n")):
-        Applicationstate.start_position += 1
+    if AppState.end_position < len(AppState.rendered.split("\n")):
+        AppState.start_position += 1
 
 # go to the beginning of the file
 @bindings.add('home')
 def beginning_of_file(event):
-    Applicationstate.start_position = 0
+    AppState.start_position = 0
 
 # go to the end of the file
 @bindings.add('end')
 def end_of_file(event):
-    Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - Applicationstate.app.renderer.output.get_size()[0]
+    AppState.start_position = len(AppState.rendered.split('\n')) - AppState.app.renderer.output.get_size()[0]
 
 # scroll up the file
 @bindings.add('up')
 def get_up(event):
-    if Applicationstate.start_position > 0:
-        Applicationstate.start_position -= 1
+    if AppState.start_position > 0:
+        AppState.start_position -= 1
 
 # page up the file
 @bindings.add('pageup')
 def page_up(event):
-    if Applicationstate.start_position > Applicationstate.app.renderer.output.get_size()[0]:
-        Applicationstate.start_position -= Applicationstate.app.renderer.output.get_size()[0]
+    if AppState.start_position > AppState.app.renderer.output.get_size()[0]:
+        AppState.start_position -= AppState.app.renderer.output.get_size()[0]
     else:
-        Applicationstate.start_position = 0
+        AppState.start_position = 0
 
 # page down the file
 @bindings.add('pagedown')
 def page_down(event):
-    if Applicationstate.start_position < len(Applicationstate.rendered.split('\n'))-2*Applicationstate.app.renderer.output.get_size()[0]:
-        Applicationstate.start_position += Applicationstate.app.renderer.output.get_size()[0]
+    if AppState.start_position < len(AppState.rendered.split('\n'))-2*AppState.app.renderer.output.get_size()[0]:
+        AppState.start_position += AppState.app.renderer.output.get_size()[0]
     else:
-        Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - \
-                                          Applicationstate.app.renderer.output.get_size()[0]
+        AppState.start_position = len(AppState.rendered.split('\n')) - \
+                                  AppState.app.renderer.output.get_size()[0]
 
 # quit the application
 @bindings.add('q')
@@ -152,104 +167,106 @@ def exit_(event):
 # go to the next link
 @bindings.add('tab')
 def link_after(event):
-    if len(Applicationstate.urls) != 0:
-        if Applicationstate.current_link < len(list(Applicationstate.urls))-1:
-            Applicationstate.current_link += 1
-            if Applicationstate.line_link_number[Applicationstate.current_link] - 1 + Applicationstate.app.renderer.output.get_size()[0] < len(Applicationstate.rendered.split('\n')):
-                Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+    if AppState.current_link >= len(list(AppState.urls))-1:
+        AppState.current_link = 0
+    if len(AppState.urls) != 0:
+        if AppState.current_link < len(list(AppState.urls))-1:
+            AppState.current_link += 1
+            if AppState.line_link_number[AppState.current_link] - 1 + AppState.app.renderer.output.get_size()[0] < len(AppState.rendered.split('\n')):
+                AppState.start_position = AppState.line_link_number[AppState.current_link] - 1
             else:
-                Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - Applicationstate.app.renderer.output.get_size()[0]
-        if len(list(Applicationstate.urls)) == 1:
-            Applicationstate.start_position = Applicationstate.line_link_number[0] - 1
-        titolo = list(Applicationstate.urls)[Applicationstate.current_link]
-        link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-        Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('['+titolo+']('+link+')', '[\007'+titolo+']('+link+')')
+                AppState.start_position = len(AppState.rendered.split('\n')) - AppState.app.renderer.output.get_size()[0]
+        if len(list(AppState.urls)) == 1:
+            AppState.start_position = AppState.line_link_number[0] - 1
+        titolo = list(AppState.urls)[AppState.current_link]
+        link = AppState.urls[list(AppState.urls)[AppState.current_link]]
+        AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')', '[\007' + titolo + '](' + link + ')')
 
 
 # go to the previous link
 @bindings.add('s-tab')
 def link_before(event):
-    if len(Applicationstate.urls) != 0:
-        if Applicationstate.current_link > 0:
-            Applicationstate.current_link -= 1
+    if len(AppState.urls) != 0:
+        if AppState.current_link > 0:
+            AppState.current_link -= 1
             #prendo la riga del link
-            if Applicationstate.line_link_number[Applicationstate.current_link] - 1 + \
-                    Applicationstate.app.renderer.output.get_size()[0] < len(Applicationstate.rendered.split('\n')):
-                Applicationstate.start_position = Applicationstate.line_link_number[Applicationstate.current_link] - 1
+            if AppState.line_link_number[AppState.current_link] - 1 + \
+                    AppState.app.renderer.output.get_size()[0] < len(AppState.rendered.split('\n')):
+                AppState.start_position = AppState.line_link_number[AppState.current_link] - 1
             else:
-                Applicationstate.start_position = len(Applicationstate.rendered.split('\n')) - \
-                                                  Applicationstate.app.renderer.output.get_size()[0]
-            titolo = list(Applicationstate.urls)[Applicationstate.current_link]
-            link = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-            Applicationstate.p_text = Applicationstate.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
+                AppState.start_position = len(AppState.rendered.split('\n')) - \
+                                          AppState.app.renderer.output.get_size()[0]
+            titolo = list(AppState.urls)[AppState.current_link]
+            link = AppState.urls[list(AppState.urls)[AppState.current_link]]
+            AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
                                                                                           '[\007' + titolo + '](' + link + ')')
 
 # open the choosen link
 @bindings.add('enter')
 def enter_link(event):
-    if len(Applicationstate.urls) > 0:
-        link_ = Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]]
-        link_name = list(Applicationstate.urls)[Applicationstate.current_link]
+    if len(AppState.urls) > 0:
+        link_ = AppState.urls[list(AppState.urls)[AppState.current_link]]
+        link_name = list(AppState.urls)[AppState.current_link]
         if (link_.endswith(".md")):
-            Applicationstate.urls = {}
-            Applicationstate.history_index += 1
+            AppState.urls = {}
+            AppState.history_index += 1
             try:
                 with open(link_, 'r') as f:
-                    Applicationstate.p_text = f.read()
-                Applicationstate.start_position = 0
-                Applicationstate.current_link = -1
+                    AppState.p_text = f.read()
+                AppState.start_position = 0
+                AppState.current_link = -1
                 tup = (link_, link_name)
-                Applicationstate.history.append(tup)
+                AppState.history.append(tup)
                 return
             except:
                 pass
         else:
             try:
-                webbrowser.open(Applicationstate.urls[list(Applicationstate.urls)[Applicationstate.current_link]])
+                webbrowser.open(AppState.urls[list(AppState.urls)[AppState.current_link]])
             except:
                 pass
 
 # resize window every time (callable)
 def wrap_text(app):
-    Applicationstate.app = app
-    fd = Document(Applicationstate.p_text)
-    with MDTRenderer(dix=Applicationstate.custom_themes, global_ref=Applicationstate.urls, app=app) as render:
-        Applicationstate.rendered = render.render(fd)
-        Applicationstate.rendered = Applicationstate.custom_themes["document"]["prefix"]+Applicationstate.rendered+Applicationstate.custom_themes["document"]["suffix"]
-        if Applicationstate.col != None:
-            Applicationstate.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, Applicationstate.col -
-                                                                           Applicationstate.custom_themes["document"][
+    AppState.app = app
+    fd = Document(AppState.p_text)
+    with MDTRenderer(dix=AppState.custom_themes, global_ref=AppState.urls, app=app) as render:
+        AppState.rendered = render.render(fd)
+        AppState.rendered = AppState.custom_themes["document"]["prefix"] + AppState.rendered + AppState.custom_themes["document"]["suffix"]
+        if AppState.col != None:
+            AppState.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, AppState.col -
+                                                                   AppState.custom_themes["document"][
                                                                                "margin"])) for l in
-                                                   Applicationstate.rendered.split('\n')])
+                                           AppState.rendered.split('\n')])
         else:
-            Applicationstate.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, app.renderer.output.get_size()[1] -
-                                                                           Applicationstate.custom_themes["document"][
-                                                                                "margin"]-Applicationstate.rmargin)) for l in
-                                                    Applicationstate.rendered.split('\n')])
-        Applicationstate.rendered = textwrap.indent(Applicationstate.rendered,
-                                                    " " * Applicationstate.custom_themes["document"]["margin"])
+            AppState.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, app.renderer.output.get_size()[1] -
+                                                                   AppState.custom_themes["document"][
+                                                                                "margin"] - AppState.rmargin)) for l in
+                                           AppState.rendered.split('\n')])
+        AppState.rendered = textwrap.indent(AppState.rendered,
+                                                    " " * AppState.custom_themes["document"]["margin"])
 
-    Applicationstate.root_container.get_children()[0].content = FormattedTextControl(
-        text=ANSI("\n".join(Applicationstate.rendered.split("\n")[Applicationstate.start_position:len(Applicationstate.rendered.split("\n"))])))
-    Applicationstate.end_position = Applicationstate.start_position + app.renderer.output.get_size()[0]
-    Applicationstate.line_link_number = []
+    AppState.root_container.get_children()[0].content = FormattedTextControl(
+        text=ANSI("\n".join(AppState.rendered.split("\n")[AppState.start_position:len(AppState.rendered.split("\n"))])))
+    AppState.end_position = AppState.start_position + app.renderer.output.get_size()[0]
+    AppState.line_link_number = []
     change_history_container()
-    for w in (list(Applicationstate.urls)):
+    for w in (list(AppState.urls)):
         count = 0
-        for l in Applicationstate.rendered.split("\n"):
+        for l in AppState.rendered.split("\n"):
             count += 1
             if w in l:
-                Applicationstate.line_link_number.append(count)
+                AppState.line_link_number.append(count)
 
 def show_gallery():
-    Applicationstate.history.append(('', ''))
+    AppState.history.append(('', ''))
     for elem in sorted(os.listdir('themes')):
         theme_ = 'themes/' + elem
         with open(theme_) as j:
-            Applicationstate.custom_themes = json.load(j)
+            AppState.custom_themes = json.load(j)
         with open('sample_theme_text.md', 'r') as f:
-            Applicationstate.p_text = f.read()
-        ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
+            AppState.p_text = f.read()
+        ftc = FormattedTextControl(text=ANSI(AppState.rendered))
 
         wind1 = Window(
             content=ftc,
@@ -257,18 +274,18 @@ def show_gallery():
         )
         wind1.vertical_scroll = 1
 
-        Applicationstate.root_container = HSplit(
+        AppState.root_container = HSplit(
             [
                 wind1,
 
-                TextArea(Applicationstate.history_template.format(Applicationstate.file_backwards,
-                                                                  Applicationstate.file_forward), focusable=False),
+                TextArea(AppState.history_template.format(AppState.file_backwards,
+                                                          AppState.file_forward), focusable=False),
             ])
-        Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
-                                           before_render=wrap_text)
-        wrap_text(Applicationstate.app)
+        AppState.app = Application(key_bindings=bindings, layout=Layout(AppState.root_container),
+                                   before_render=wrap_text)
+        wrap_text(AppState.app)
         print(elem+'\n')
-        print_formatted_text(ANSI(Applicationstate.rendered))
+        print_formatted_text(ANSI(AppState.rendered))
 
 
 def show_theme_list():
@@ -278,7 +295,7 @@ def show_theme_list():
 
 
 def run(interactive):
-    ftc = FormattedTextControl(text=ANSI(Applicationstate.rendered))
+    ftc = FormattedTextControl(text=ANSI(AppState.rendered))
 
     wind1 = Window(
         content=ftc,
@@ -286,19 +303,19 @@ def run(interactive):
     )
     wind1.vertical_scroll = 1
 
-    Applicationstate.root_container = HSplit(
+    AppState.root_container = HSplit(
         [
             wind1,
 
-            TextArea(Applicationstate.history_template.format(Applicationstate.file_backwards, Applicationstate.file_forward), focusable=False),
+            TextArea(AppState.history_template.format(AppState.file_backwards, AppState.file_forward), focusable=False),
         ])
-    Applicationstate.app = Application(key_bindings=bindings, layout=Layout(Applicationstate.root_container),
-                                       before_render=wrap_text)
-    wrap_text(Applicationstate.app)
+    AppState.app = Application(key_bindings=bindings, layout=Layout(AppState.root_container),
+                               before_render=wrap_text)
+    wrap_text(AppState.app)
     if interactive == False:
-        print_formatted_text(ANSI(Applicationstate.rendered))
+        print_formatted_text(ANSI(AppState.rendered))
     else:
-        Applicationstate.app.run()
+        AppState.app.run()
 
 
 @click.command()
@@ -345,7 +362,7 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
 
     try:
         with open(theme_) as j:
-            Applicationstate.custom_themes = json.load(j)
+            AppState.custom_themes = json.load(j)
     except:
         print("Theme file {} not found.".format(theme_))
         exit(1)
@@ -355,14 +372,14 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
 
     try:
         with open(mdfile, 'r') as f:
-            Applicationstate.p_text = f.read()
+            AppState.p_text = f.read()
     except:
         print("Markdown file {} not found.".format(mdfile))
         exit(1)
-    Applicationstate.history.append((mdfile, mdfile))
-    Applicationstate.max_h = len(Applicationstate.rendered.split("\n"))
-    Applicationstate.col = col
-    Applicationstate.rmargin = rmargin
+    AppState.history.append((mdfile, mdfile))
+    AppState.max_h = len(AppState.rendered.split("\n"))
+    AppState.col = col
+    AppState.rmargin = rmargin
     run(i)
 
 

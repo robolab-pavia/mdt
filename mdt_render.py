@@ -1,4 +1,22 @@
 """
+    <Markdown file reader from terminal.>
+    Copyright (C) <2020>  <Catena Andrea, Facchinetti Tullio, Benetti Guido>
+"""
+"""
+    Markdown in terminal is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Markdown in terminal is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Markdown in terminal.  If not, see <http://www.gnu.org/licenses/>.
+"""
+"""
 mdt renderer for mistletoe.
 """
 
@@ -33,35 +51,29 @@ class MDTRenderer(BaseRenderer):
             return ''.join(inner)
         return token.content
 
+
+    def format_inline_text(self, key):
+        template = click.style(self.dix[key]["prefix"] + "{}" + self.dix[key]["suffix"],
+                               fg=self.dix[key]["color"], bold=self.dix[key]["bold"],
+                               bg=self.dix[key]["background_color"], underline=self.dix[key]["underline"],
+                               blink=self.dix[key]["blink"])
+        return template
+
     def render_strong(self, token):
-        template = click.style(self.dix["strong"]["prefix"]+"{}"+self.dix["strong"]["suffix"],
-                               fg=self.dix["strong"]["color"], bold=self.dix["strong"]["bold"],
-                               bg=self.dix["strong"]["background_color"], underline=self.dix["strong"]["underline"],
-                               blink=self.dix["strong"]["blink"])
+        template = self.format_inline_text("strong")
         return template.format(self.render_inner(token))
 
     def render_emphasis(self, token):
-        template = click.style(self.dix["emph"]["prefix"] + "{}" + self.dix["emph"]["suffix"],
-                               fg=self.dix["emph"]["color"], bold=self.dix["emph"]["bold"],
-                               bg=self.dix["emph"]["background_color"], underline=self.dix["emph"]["underline"],
-                               blink=self.dix["emph"]["blink"])
+        template = self.format_inline_text("emph")
         return template.format(self.render_inner(token))
 
     def render_inline_code(self, token):
-        template = click.style(self.dix["inline_code"]["prefix"] + "{}" + self.dix["inline_code"]["suffix"],
-                               fg=self.dix["inline_code"]["color"], bold=self.dix["inline_code"]["bold"],
-                               bg=self.dix["inline_code"]["background_color"], underline=self.dix["inline_code"]["underline"],
-                               blink=self.dix["inline_code"]["blink"])
+        template = self.format_inline_text("inline_code")
         inner = token.children[0].content
         return template.format(inner)
 
     def render_strikethrough(self, token):
-        template = click.style(self.dix["strikethrough"]["prefix"] + "{}" + self.dix["strikethrough"]["suffix"],
-                               fg=self.dix["strikethrough"]["color"], bold=self.dix["strikethrough"]["bold"],
-                               bg=self.dix["strikethrough"]["background_color"],
-                               underline=self.dix["strikethrough"]["underline"],
-                               blink=self.dix["strikethrough"]["blink"]
-                               )
+        template = self.format_inline_text("strikethrough")
         return template.format(self.render_inner(token))
 
     def render_link(self, token):
@@ -69,11 +81,11 @@ class MDTRenderer(BaseRenderer):
         inner = self.render_inner(token)
         if inner.startswith('\007'):
             inner = inner.replace('\007', '')
-            template = click.style(self.dix["choosen_link"]["prefix"] + '{inner}' + self.dix["choosen_link"]["suffix"],
-                                   fg=self.dix["choosen_link"]["color"], bold=self.dix["choosen_link"]["bold"],
-                                   bg=self.dix["choosen_link"]["background_color"],
-                                   underline=self.dix["choosen_link"]["underline"],
-                                   blink=self.dix["choosen_link"]["blink"]
+            template = click.style(self.dix["selected_link"]["prefix"] + '{inner}' + self.dix["selected_link"]["suffix"],
+                                   fg=self.dix["selected_link"]["color"], bold=self.dix["selected_link"]["bold"],
+                                   bg=self.dix["selected_link"]["background_color"],
+                                   underline=self.dix["selected_link"]["underline"],
+                                   blink=self.dix["selected_link"]["blink"]
                                    )
         else:
             template = click.style(self.dix["link"]["prefix"]+'{inner}'+self.dix["link"]["suffix"],
@@ -152,14 +164,3 @@ class MDTRenderer(BaseRenderer):
         self.footnotes.update(token.footnotes)
         inner = '\n'.join([self.render(child) for child in token.children])
         return '{}\n'.format(inner) if inner else ''
-
-
-
-
-
-
-
-
-
-
-
