@@ -364,6 +364,8 @@ def check_rmargin_arg(ctx, param, value):
 @click.option('--theme-file', help='Choose a theme file.')
 def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
     os.system("clear")
+    AppState.col = col
+    AppState.rmargin = rmargin
     """Main function."""
     if col != None and rmargin != 0:
         print("The options --col and --rmargin can not be used at the same time.")
@@ -399,8 +401,6 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
         exit(1)
     AppState.history.append((mdfile, mdfile))
     AppState.max_h = len(AppState.rendered.split("\n"))
-    AppState.col = col
-    AppState.rmargin = rmargin
     run(i)
 
 
