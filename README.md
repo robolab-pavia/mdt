@@ -14,7 +14,7 @@ If you want to play with Markdown, you can edit me. Once you have finished with 
 
 ## Project
 
-This project is a markdown file reader from your terminal.
+This project is a Markdown file reader for your terminal.
 
 `mdt` is built with Python, and uses the following libraries:
 
@@ -36,3 +36,38 @@ In interactive mode you can:
 
 * Open web links in the default *browser* (requires a graphic sessions to work).
 * Follow links to local files forward and backward, allowing a convenient exploration of "wiki-style" files.
+
+## Installation
+
+Clone the repository.
+
+If you have administration permissions, run:
+
+```
+python3 setup.py install
+```
+
+Otherwise you can install `mdt` for your own user only with:
+
+```
+python3 setup.py install --user
+```
+
+## Options
+
+The following options are available:
+
+```
+$ mdt --help
+Usage: mdt [OPTIONS] [MDFILE]
+
+Options:
+  --gallery          Print a demo gallery of the available themes.
+  -i                 Interactive mode.
+  -l                 List all the default themes.
+  --col INTEGER      Set the text width in number of columns.
+  --rmargin INTEGER  Set the right right margin.
+  --theme INTEGER    Choose a default theme by ID.
+  --theme-file TEXT  Choose a theme file.
+  --help             Show this message and exit.
+```
