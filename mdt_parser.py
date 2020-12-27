@@ -353,35 +353,26 @@ def check_rmargin_arg(ctx, param, value):
     return value
 
 
-@click.command()
-@click.argument('mdfile', required=False)
-@click.option('--gallery', help='Print a demo gallery of the available themes.', is_flag=True)
+@click.group()
+def cli():
+    pass
+
+
+@cli.command(name='show', help='Display the specified Markdown file.')
+@click.argument('mdfile', required=True)
 @click.option('-i', help='Interactive mode.', is_flag=True)
-@click.option('-l', help='List all the default themes.', is_flag=True)
 @click.option('--col', callback=check_col_arg, help='Set the text width in number of columns.', type=int)
-@click.option('--rmargin', callback=check_rmargin_arg, help='Set the right right margin.', type=int, default=0)
-@click.option('--theme', default=1, callback=check_theme_arg, help='Choose a default theme by ID.', type=int)
-@click.option('--theme-file', help='Choose a theme file.')
-def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
+@click.option('--rmargin', callback=check_rmargin_arg, help='Set the right margin.', type=int, default=0)
+@click.option('--theme', default=1, callback=check_theme_arg, help='Use a default theme by ID.', type=int)
+@click.option('--theme-file', help='Use the specified theme file.')
+def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
     AppState.col = col
     AppState.rmargin = rmargin
-    """Main function."""
-    if col != None and rmargin != 0:
-        print("The options --col and --rmargin can not be used at the same time.")
-        exit(1)
-    if gallery == True:
-        show_gallery()
-        return
-    if l == True:
-        show_theme_list()
-        return
-
     theme_ = 'themes/' + sorted(os.listdir('themes'))[0]
     if theme is not None:
         theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
     if theme_file is not None:
         theme_ = theme_file
-
     try:
         with open(theme_) as j:
             AppState.custom_themes = json.load(j)
@@ -391,7 +382,6 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
     if mdfile == None:
         print("Markdown file name required.")
         exit(1)
-
     try:
         with open(mdfile, 'r') as f:
             AppState.p_text = f.read()
@@ -403,8 +393,28 @@ def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
     run(i)
 
 
+@cli.command(name='gallery', help='Display a gallery with the available themes.')
+@click.option('--col', callback=check_col_arg, help='Set the text width in number of columns.', type=int)
+@click.option('--rmargin', callback=check_rmargin_arg, help='Set the right right margin.', type=int, default=0)
+def cmd_gallery(col=None, rmargin=0):
+    AppState.col = col
+    AppState.rmargin = rmargin
+    if col != None and rmargin != 0:
+        print("The options --col and --rmargin can not be used at the same time.")
+        exit(1)
+    show_gallery()
+
+
+@cli.command(name='themes', help='Display the list of available themes.')
+def cmd_themes():
+    show_theme_list()
+
+
 def main():
-    mdt()
+    cli.add_command(cmd_show)
+    cli.add_command(cmd_gallery)
+    cli.add_command(cmd_themes)
+    cli()
 
 
 if __name__ == '__main__':
