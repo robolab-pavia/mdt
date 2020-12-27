@@ -393,7 +393,7 @@ def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
     run(i)
 
 
-@cli.command(name='gallery', help='Display a gallery with the available themes.')
+@cli.command(name='gallery', help='Shows a gallery with the available themes.')
 @click.option('--col', callback=check_col_arg, help='Set the text width in number of columns.', type=int)
 @click.option('--rmargin', callback=check_rmargin_arg, help='Set the right right margin.', type=int, default=0)
 def cmd_gallery(col=None, rmargin=0):
@@ -405,7 +405,7 @@ def cmd_gallery(col=None, rmargin=0):
     show_gallery()
 
 
-@cli.command(name='themes', help='Display the list of available themes.')
+@cli.command(name='themes', help='Lists of available themes.')
 def cmd_themes():
     show_theme_list()
 
