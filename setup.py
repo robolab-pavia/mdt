@@ -12,6 +12,6 @@ setup(
     ],
     entry_points='''
     [console_scripts]
-    mdt=mdt_parser:mdt
+    mdt=mdt_parser:main
     ''',
 )
