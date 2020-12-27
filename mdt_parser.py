@@ -363,7 +363,6 @@ def check_rmargin_arg(ctx, param, value):
 @click.option('--theme', default=1, callback=check_theme_arg, help='Choose a default theme by ID.', type=int)
 @click.option('--theme-file', help='Choose a theme file.')
 def mdt(mdfile, theme, gallery, i, l, col=None, rmargin=0, theme_file=None):
-    os.system("clear")
     AppState.col = col
     AppState.rmargin = rmargin
     """Main function."""
