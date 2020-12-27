@@ -125,7 +125,7 @@
     "underline": true,
     "blink": false
   },
-  "choosen_link": {
+  "selected_link": {
     "prefix": "",
     "suffix": "",
     "color": "",
