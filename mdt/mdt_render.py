@@ -143,6 +143,7 @@ class MDTRenderer(BaseRenderer):
         template = '{}'
         self._suppress_ptag_stack.append(not token.loose)
         inner = '\n'.join([self.render(child) for child in token.children])
+        inner = self.dix["list"]["prefix"] + inner + self.dix["list"]["suffix"]
         self._suppress_ptag_stack.pop()
         return template.format(inner)
 

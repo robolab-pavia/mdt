@@ -113,6 +113,10 @@
     "suffix": "",
     "bold": true
   },
+  "list": {
+    "prefix": "",
+    "suffix": "\n"
+  },
   "item": {
     "prefix": "• ",
     "suffix": ""
