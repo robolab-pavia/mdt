@@ -2,6 +2,8 @@
     <Markdown file reader from terminal.>
     Copyright (C) <2020>  <Catena Andrea, Facchinetti Tullio, Benetti Guido>
 """
+from pathlib import Path
+
 """
     Markdown in terminal is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +33,10 @@ from .mdt_render import MDTRenderer
 from mistletoe import Document
 import os
 
+SAMPLE_FILE = Path(__file__).parent / 'sample_theme_text.md'
+THEMES_PATH = Path(__file__).parent / 'themes'
+THEMES = sorted(os.listdir(str(THEMES_PATH)))
+N_THEMES = len(THEMES)
 
 # Global key bindings.
 bindings = KeyBindings()
@@ -267,11 +273,11 @@ def wrap_text(app):
 
 def show_gallery():
     AppState.history.append(('', ''))
-    for elem in sorted(os.listdir('themes')):
-        theme_ = 'themes/' + elem
+    for elem in sorted(os.listdir(str(THEMES_PATH))):
+        theme_ = THEMES_PATH / elem
         with open(theme_) as j:
             AppState.custom_themes = json.load(j)
-        with open('sample_theme_text.md', 'r') as f:
+        with open(SAMPLE_FILE, 'r') as f:
             AppState.p_text = f.read()
         ftc = FormattedTextControl(text=ANSI(AppState.rendered))
 
@@ -296,7 +302,8 @@ def show_gallery():
 
 
 def show_theme_list():
-    styles = zip(range(1, len(os.listdir('themes'))+1), sorted(os.listdir('themes')))
+
+    styles = zip(range(1, N_THEMES+1), THEMES)
     for n, l in styles:
         print('{} : {}'.format(n, l))
 
@@ -329,9 +336,8 @@ def check_theme_arg(ctx, param, value):
     """Callback for checking the value of the theme ID."""
     if value <= 0:
         raise click.BadParameter('negative value {}'.format(value))
-    n_themes = len(os.listdir('themes'))
-    if value > n_themes:
-        raise click.BadParameter("required theme ID in [1..{}], given {}".format(n_themes, value))
+    if value > N_THEMES:
+        raise click.BadParameter("required theme ID in [1..{}], given {}".format(N_THEMES, value))
     return value
 
 
@@ -368,9 +374,9 @@ def cli():
 def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
     AppState.col = col
     AppState.rmargin = rmargin
-    theme_ = 'themes/' + sorted(os.listdir('themes'))[0]
+    theme_ = str(THEMES_PATH / THEMES[0])
     if theme is not None:
-        theme_ = 'themes/' + sorted(os.listdir('themes'))[theme-1]
+        theme_ = str(THEMES_PATH / THEMES[theme - 1])
     if theme_file is not None:
         theme_ = theme_file
     try:

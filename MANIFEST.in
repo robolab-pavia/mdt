@@ -1,0 +1,2 @@
+include mdt/themes/*.json
+include mdt/sample_theme_text.md
