@@ -27,7 +27,7 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout.containers import Window, HSplit
 from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
-from mdt_render import MDTRenderer
+from .mdt_render import MDTRenderer
 from mistletoe import Document
 import os
 
