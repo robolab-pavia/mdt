@@ -134,9 +134,15 @@ class MDTRenderer(BaseRenderer):
 
     def render_block_code(self, token):
         template = '{}'
-        inner = "\n".join([click.style(self.dix["block_code"]["prefix"]+x+self.dix["block_code"]["suffix"], fg=self.dix["block_code"]["color"], bold=self.dix["block_code"]["bold"],
-                           bg=self.dix["block_code"]["background_color"], underline=self.dix["block_code"]["underline"],
-                           blink=self.dix["block_code"]["blink"]) if x != "" else x for x in token.children[0].content.split("\n")])
+        strings = []
+        for x in token.children[0].content.split("\n"):
+            strings.append(click.style(
+                self.dix["block_code"]["prefix"] + x + self.dix["block_code"]["suffix"],
+                fg=self.dix["block_code"]["color"], bold=self.dix["block_code"]["bold"],
+                bg=self.dix["block_code"]["background_color"],
+                underline=self.dix["block_code"]["underline"],
+                blink=self.dix["block_code"]["blink"]))
+        inner = "\n".join(strings[:-1])
         return template.format(inner)
 
     def render_list(self, token):
