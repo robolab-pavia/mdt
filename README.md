@@ -13,16 +13,15 @@ mdt show README.md
 
 If you want to play with Markdown, you can edit me. Once you have finished with me, you can run me in your terminal.
 
-## Project
+## Installation
 
-This project is a Markdown file reader for your terminal.
+Clone the repository.
 
-`mdt` is built with Python, and uses the following libraries:
+If you have administration permissions, run:
 
-* [Mistletoe](https://github.com/miyuchina/mistletoe) to parse Markdown files.
-* [Python Prompt Toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) for the interactive mode.
-* [Click](https://click.palletsprojects.com/en/7.x/) to handle commmand line parameters.
-* [ansiwrap](https://pypi.org/project/ansiwrap/) to perform the word wrapping.
+```
+pip install mdt-viewer
+```
 
 ## Features
 
@@ -35,22 +34,21 @@ This project is a Markdown file reader for your terminal.
 
 In interactive mode you can:
 
-* Open web links in the default *browser* (requires a graphic sessions to work).
+* Open web links in the default *browser* (requires a graphic session to work).
 * Follow links to local files forward and backward, allowing a convenient exploration of "wiki-style" files.
 
-## Installation
+## Project
 
-Clone the repository.
+`mdt` is built with Python, and uses the following libraries:
 
-If you have administration permissions, run:
+* [Mistletoe](https://github.com/miyuchina/mistletoe) to parse Markdown files.
+* [Python Prompt Toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) for the interactive mode.
+* [Click](https://click.palletsprojects.com/en/7.x/) to handle commmand line parameters.
+* [ansiwrap](https://pypi.org/project/ansiwrap/) to perform the word wrapping.
 
-```
-pip install mdt-viewer
-```
+# Commands
 
-## Commands
-
-The following options are available:
+The following commands are available:
 
 ```
 $ mdt --help
