@@ -140,4 +140,4 @@ An example of theme file is:
 
 where the styling items should be pretty straightforward to understand.
 
-The available items that can be themed are: `document` `block_quote`, `paragraph`, `heading`, `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `strikethrough`, `emph`, `strong`, `item`, `item_list`, `link`, `selected_link`, `inline_code`, `block_code`.
+The available items that can be themed are: `document` `block_quote`, `paragraph`, `heading`, `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `strikethrough`, `emph`, `strong`, `item`, `list`, `link`, `selected_link`, `inline_code`, `block_code`.
