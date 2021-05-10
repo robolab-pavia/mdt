@@ -32,6 +32,7 @@ from prompt_toolkit.layout.layout import Layout
 from .mdt_render import MDTRenderer
 from mistletoe import Document
 import os
+from .version import __version__
 
 SAMPLE_FILE = Path(__file__).parent / 'sample_theme_text.md'
 THEMES_PATH = Path(__file__).parent / 'themes'
@@ -360,6 +361,7 @@ def check_rmargin_arg(ctx, param, value):
 
 
 @click.group()
+@click.version_option(version=__version__)
 def cli():
     pass
 

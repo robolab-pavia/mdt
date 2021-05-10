@@ -1,2 +1,3 @@
-from mdt.mdt_render import *
-from mdt.mdt_parser import *
+from .mdt_render import *
+from .mdt_parser import *
+from .version import __version__
