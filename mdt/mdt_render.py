@@ -1,8 +1,7 @@
 """
     <Markdown file reader from terminal.>
     Copyright (C) <2020>  <Catena Andrea, Facchinetti Tullio, Benetti Guido>
-"""
-"""
+
     Markdown in terminal is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -19,9 +18,9 @@
 """
 mdt renderer for mistletoe.
 """
-
 import click
 from mistletoe.base_renderer import BaseRenderer
+
 
 class MDTRenderer(BaseRenderer):
     """
@@ -44,13 +43,11 @@ class MDTRenderer(BaseRenderer):
     def __exit__(self, *args):
         super().__exit__(*args)
 
-
     def render_to_plain(self, token):
         if hasattr(token, 'children'):
             inner = [self.render_to_plain(child) for child in token.children]
             return ''.join(inner)
         return token.content
-
 
     def format_inline_text(self, key):
         template = click.style(self.dix[key]["prefix"] + "{}" + self.dix[key]["suffix"],
@@ -121,7 +118,6 @@ class MDTRenderer(BaseRenderer):
                            bg=self.dix["block_quote"]["background_color"], underline=self.dix["block_quote"]["underline"],
                            blink=self.dix["block_quote"]["blink"]
                            )
-
 
     def render_paragraph(self, token):
         if self._suppress_ptag_stack[-1]:

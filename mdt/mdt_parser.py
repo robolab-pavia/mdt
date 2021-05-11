@@ -1,14 +1,11 @@
 """
     <Markdown file reader from terminal.>
     Copyright (C) <2020>  <Catena Andrea, Facchinetti Tullio, Benetti Guido>
-"""
-from pathlib import Path
 
-"""
-    Markdown in terminal is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    Markdown in terminal is free software: you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
 
     Markdown in terminal is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +13,8 @@ from pathlib import Path
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Markdown in terminal.  If not, see <http://www.gnu.org/licenses/>.
+    along with Markdown in terminal.
+    If not, see <http://www.gnu.org/licenses/>.
 """
 import json
 import textwrap
@@ -24,7 +22,7 @@ import webbrowser
 import ansiwrap
 from prompt_toolkit.widgets import TextArea
 import click
-from prompt_toolkit import Application, HTML, print_formatted_text, ANSI
+from prompt_toolkit import Application, print_formatted_text, ANSI
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout.containers import Window, HSplit
 from prompt_toolkit.layout.controls import FormattedTextControl
@@ -33,6 +31,7 @@ from .mdt_render import MDTRenderer
 from mistletoe import Document
 import os
 from .version import __version__
+from pathlib import Path
 
 SAMPLE_FILE = Path(__file__).parent / 'sample_theme_text.md'
 THEMES_PATH = Path(__file__).parent / 'themes'
@@ -51,7 +50,7 @@ class AppState:
 
     custom_themes = None
 
-    #margin
+    # margin
     col = None
     rmargin = 0
 
@@ -90,7 +89,8 @@ def change_history_container():
     file_manager = []
     file_manager = map(lambda x: x[1], AppState.history)
     file_manager = list(file_manager)
-    file_manager[AppState.history_index] = '[' + file_manager[AppState.history_index] + ']'
+    idx = AppState.history_index
+    file_manager[idx] = '[' + file_manager[idx] + ']'
     line = ' '.join(file_manager)
     AppState.root_container.get_children()[1].content.buffer.text = AppState.history_template.format(line)
 
@@ -107,7 +107,7 @@ def go_back_history(event):
         AppState.start_position = 0
         AppState.current_link = -1
         return
-    except:
+    except Exception:
         pass
 
 
@@ -122,8 +122,9 @@ def go_forward_history(event):
         AppState.start_position = 0
         AppState.current_link = -1
         return
-    except:
+    except Exception:
         pass
+
 
 @bindings.add('down')
 def get_down(event):
@@ -143,11 +144,13 @@ def end_of_file(event):
     """Go to the end of file."""
     AppState.start_position = len(AppState.rendered.split('\n')) - AppState.app.renderer.output.get_size()[0]
 
+
 @bindings.add('up')
 def get_up(event):
     """Scroll up the file one line."""
     if AppState.start_position > 0:
         AppState.start_position -= 1
+
 
 @bindings.add('pageup')
 def page_up(event):
@@ -167,11 +170,11 @@ def page_down(event):
         AppState.start_position = len(AppState.rendered.split('\n')) - \
                                   AppState.app.renderer.output.get_size()[0]
 
-# quit the application
+
 @bindings.add('q')
 def exit_(event):
     """
-    Pressing Ctrl-Q will exit the user interface.
+    Pressing 'q' will exit the user interface.
     Setting a return value means: quit the event loop that drives the user
     interface and return this value from the `Application.run()` call.
     """
@@ -215,6 +218,7 @@ def link_before(event):
         AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + title + '](' + link + ')',
                                                                                           '[\007' + title + '](' + link + ')')
 
+
 @bindings.add('enter')
 def enter_link(event):
     """Open the selected link."""
@@ -232,13 +236,14 @@ def enter_link(event):
             AppState.current_link = -1
             tup = (link_, link_name)
             AppState.history.append(tup)
-        except:
+        except Exception:
             pass
     else:
         try:
             webbrowser.open(AppState.urls[list(AppState.urls)[AppState.current_link]])
-        except:
+        except Exception:
             pass
+
 
 def wrap_text(app):
     """Resize window every time (callable)."""
@@ -247,7 +252,7 @@ def wrap_text(app):
     with MDTRenderer(dix=AppState.custom_themes, global_ref=AppState.urls, app=app) as render:
         AppState.rendered = render.render(fd)
         AppState.rendered = AppState.custom_themes["document"]["prefix"] + AppState.rendered + AppState.custom_themes["document"]["suffix"]
-        if AppState.col != None:
+        if AppState.col is not None:
             AppState.rendered = '\n'.join(["\n".join(ansiwrap.wrap(l, AppState.col -
                                                                    AppState.custom_themes["document"][
                                                                                "margin"])) for l in
@@ -271,6 +276,7 @@ def wrap_text(app):
             count += 1
             if w in l:
                 AppState.line_link_number.append(count)
+
 
 def show_gallery():
     AppState.history.append(('', ''))
@@ -327,7 +333,7 @@ def run(interactive):
     AppState.app = Application(key_bindings=bindings, layout=Layout(AppState.root_container),
                                before_render=wrap_text)
     wrap_text(AppState.app)
-    if interactive == False:
+    if not interactive:
         print_formatted_text(ANSI(AppState.rendered))
     else:
         AppState.app.run()
@@ -384,10 +390,10 @@ def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
     try:
         with open(theme_) as j:
             AppState.custom_themes = json.load(j)
-    except:
+    except Exception:
         print("Theme file {} not found.".format(theme_))
         exit(1)
-    if mdfile == None:
+    if mdfile is not None:
         print("Markdown file name required.")
         exit(1)
     try:
@@ -407,7 +413,7 @@ def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
 def cmd_gallery(col=None, rmargin=0):
     AppState.col = col
     AppState.rmargin = rmargin
-    if col != None and rmargin != 0:
+    if col is not None and rmargin != 0:
         print("The options --col and --rmargin can not be used at the same time.")
         exit(1)
     show_gallery()
