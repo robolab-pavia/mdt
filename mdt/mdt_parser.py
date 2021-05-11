@@ -192,9 +192,9 @@ def link_after(event):
                 AppState.start_position = len(AppState.rendered.split('\n')) - AppState.app.renderer.output.get_size()[0]
         if len(list(AppState.urls)) == 1:
             AppState.start_position = AppState.line_link_number[0] - 1
-        titolo = list(AppState.urls)[AppState.current_link]
+        title = list(AppState.urls)[AppState.current_link]
         link = AppState.urls[list(AppState.urls)[AppState.current_link]]
-        AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')', '[\007' + titolo + '](' + link + ')')
+        AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + title + '](' + link + ')', '[\007' + title + '](' + link + ')')
 
 
 @bindings.add('s-tab')
@@ -203,17 +203,16 @@ def link_before(event):
     if len(AppState.urls) != 0:
         if AppState.current_link > 0:
             AppState.current_link -= 1
-            #prendo la riga del link
             if AppState.line_link_number[AppState.current_link] - 1 + \
                     AppState.app.renderer.output.get_size()[0] < len(AppState.rendered.split('\n')):
                 AppState.start_position = AppState.line_link_number[AppState.current_link] - 1
             else:
                 AppState.start_position = len(AppState.rendered.split('\n')) - \
                                           AppState.app.renderer.output.get_size()[0]
-            titolo = list(AppState.urls)[AppState.current_link]
+            title = list(AppState.urls)[AppState.current_link]
             link = AppState.urls[list(AppState.urls)[AppState.current_link]]
-            AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + titolo + '](' + link + ')',
-                                                                                          '[\007' + titolo + '](' + link + ')')
+            AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + title + '](' + link + ')',
+                                                                                          '[\007' + title + '](' + link + ')')
 
 @bindings.add('enter')
 def enter_link(event):
