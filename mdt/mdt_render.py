@@ -138,14 +138,16 @@ class MDTRenderer(BaseRenderer):
         template = '{}'
         self._suppress_ptag_stack.append(not token.loose)
         inner = '\n'.join([self.render(child) for child in token.children])
-        inner = self.dix["list"]["prefix"] + inner + self.dix["list"]["suffix"]
+        pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["list"])
+        inner = pre + inner + suf
         self._suppress_ptag_stack.pop()
         return template.format(inner)
 
     def render_list_item(self, token):
         if len(token.children) == 0:
             return ''
-        inner = self.dix["item"]["prefix"]+''.join([self.render(child) for child in token.children])+self.dix["item"]["suffix"]
+        pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["item"])
+        inner = pre + ''.join([self.render(child) for child in token.children]) + suf
         return '{}'.format(inner)
 
     @staticmethod
