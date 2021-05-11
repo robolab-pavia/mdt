@@ -393,7 +393,7 @@ def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
     except Exception:
         print("Theme file {} not found.".format(theme_))
         exit(1)
-    if mdfile is not None:
+    if mdfile is None:
         print("Markdown file name required.")
         exit(1)
     try:
