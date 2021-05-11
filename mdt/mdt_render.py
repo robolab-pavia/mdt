@@ -22,6 +22,17 @@ import click
 from mistletoe.base_renderer import BaseRenderer
 
 
+def unpack_style_fields(item):
+    pre = item.get("prefix", "")
+    suf = item.get("suffix", "")
+    fg = item.get("color", "")
+    bg = item.get("background_color", "")
+    bold = item.get("bold", "")
+    ul = item.get("underline", "")
+    blink = item.get("blink", "")
+    return pre, suf, fg, bg, bold, ul, blink
+
+
 class MDTRenderer(BaseRenderer):
     """
     mdt renderer class.
@@ -50,10 +61,8 @@ class MDTRenderer(BaseRenderer):
         return token.content
 
     def format_inline_text(self, key):
-        template = click.style(self.dix[key]["prefix"] + "{}" + self.dix[key]["suffix"],
-                               fg=self.dix[key]["color"], bold=self.dix[key]["bold"],
-                               bg=self.dix[key]["background_color"], underline=self.dix[key]["underline"],
-                               blink=self.dix[key]["blink"])
+        pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix[key])
+        template = click.style(pre + "{}" + suf, bg=bg, fg=fg, bold=bold, underline=ul, blink=blink)
         return template
 
     def render_strong(self, token):
@@ -78,32 +87,25 @@ class MDTRenderer(BaseRenderer):
         inner = self.render_inner(token)
         if inner.startswith('\007'):
             inner = inner.replace('\007', '')
-            template = click.style(self.dix["selected_link"]["prefix"] + '{inner}' + self.dix["selected_link"]["suffix"],
-                                   fg=self.dix["selected_link"]["color"], bold=self.dix["selected_link"]["bold"],
-                                   bg=self.dix["selected_link"]["background_color"],
-                                   underline=self.dix["selected_link"]["underline"],
-                                   blink=self.dix["selected_link"]["blink"]
-                                   )
+            pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["selected_link"])
         else:
-            template = click.style(self.dix["link"]["prefix"]+'{inner}'+self.dix["link"]["suffix"],
-                                   fg=self.dix["link"]["color"], bold=self.dix["link"]["bold"],
-                                   bg=self.dix["link"]["background_color"],
-                                   underline=self.dix["link"]["underline"],
-                                   blink=self.dix["link"]["blink"]
-                                   )
+            pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["link"])
+        template = click.style(pre + "{inner}" + suf, bg=bg, fg=fg, bold=bold, underline=ul, blink=blink)
         self.global_ref.update({inner: target})
         return template.format(target=target, inner=inner)
 
     def render_heading(self, token):
         key = "h" + str(token.level)
-        pre = self.dix["heading"]["prefix"] if self.dix[key]["prefix"] == "" else self.dix[key]["prefix"]
-        col = self.dix["heading"]["color"] if self.dix[key]["color"] == "" else self.dix[key]["color"]
-        suf = self.dix["heading"]["suffix"] if self.dix[key]["suffix"] == "" else self.dix[key]["suffix"]
-        bold = self.dix["heading"]["bold"] if self.dix[key]["bold"] == "" else self.dix[key]["bold"]
-        back = self.dix["heading"]["background_color"] if self.dix[key]["background_color"] == "" else self.dix[key]["background_color"]
-        under = self.dix["heading"]["underline"] if self.dix[key]["underline"] == "" else self.dix[key]["underline"]
-        blink = self.dix["heading"]["blink"] if self.dix[key]["blink"] == "" else self.dix[key]["blink"]
-        template = click.style(pre + "{inner}" + suf, bg=back, bold=bold, fg=col, underline=under, blink=blink)
+        pre_1, suf_1, fg_1, bg_1, bold_1, ul_1, blink_1 = unpack_style_fields(self.dix["heading"])
+        pre_2, suf_2, fg_2, bg_2, bold_2, ul_2, blink_2 = unpack_style_fields(self.dix[key])
+        pre = pre_2 if pre_2 != "" else pre_1
+        suf = suf_2 if suf_2 != "" else suf_1
+        fg = fg_2 if fg_2 != "" else fg_1
+        bg = bg_2 if bg_2 != "" else bg_1
+        bold = bold_2 if bold_2 != "" else bold_1
+        ul = ul_2 if ul_2 != "" else ul_1
+        blink = blink_2 if blink_2 != "" else blink_1
+        template = click.style(pre + "{inner}" + suf, bg=bg, fg=fg, bold=bold, underline=ul, blink=blink)
         inner = self.render_inner(token)
         return template.format(inner=inner)
 
@@ -113,31 +115,22 @@ class MDTRenderer(BaseRenderer):
         elements.extend([self.render(child) for child in token.children])
         self._suppress_ptag_stack.pop()
         elements.append("")
-        return click.style(self.dix["block_quote"]["prefix"]+''.join(elements)+self.dix["block_quote"]["suffix"],
-                           fg=self.dix["block_quote"]["color"], bold=self.dix["block_quote"]["bold"],
-                           bg=self.dix["block_quote"]["background_color"], underline=self.dix["block_quote"]["underline"],
-                           blink=self.dix["block_quote"]["blink"]
-                           )
+        pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["block_quote"])
+        return click.style(pre + ''.join(elements) + suf, bg=bg, fg=fg, bold=bold, underline=ul, blink=blink)
 
     def render_paragraph(self, token):
         if self._suppress_ptag_stack[-1]:
             return '{}'.format(self.render_inner(token))
         template = format(self.render_inner(token))
-        return click.style(self.dix["paragraph"]["prefix"]+template+self.dix["paragraph"]["suffix"], fg=self.dix["paragraph"]["color"], bold=self.dix["paragraph"]["bold"],
-                           bg=self.dix["paragraph"]["background_color"], underline=self.dix["paragraph"]["underline"],
-                           blink=self.dix["paragraph"]["blink"]
-                           )
+        pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["paragraph"])
+        return click.style(pre + template + suf, bg=bg, fg=fg, bold=bold, underline=ul, blink=blink)
 
     def render_block_code(self, token):
         template = '{}'
         strings = []
+        pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["block_code"])
         for x in token.children[0].content.split("\n"):
-            strings.append(click.style(
-                self.dix["block_code"]["prefix"] + x + self.dix["block_code"]["suffix"],
-                fg=self.dix["block_code"]["color"], bold=self.dix["block_code"]["bold"],
-                bg=self.dix["block_code"]["background_color"],
-                underline=self.dix["block_code"]["underline"],
-                blink=self.dix["block_code"]["blink"]))
+            strings.append(click.style( pre + x + suf, fg=fg, bold=bold, bg=bg, underline=ul, blink=blink))
         inner = "\n".join(strings[:-1])
         return template.format(inner)
 
