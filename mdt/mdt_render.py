@@ -130,7 +130,7 @@ class MDTRenderer(BaseRenderer):
         strings = []
         pre, suf, fg, bg, bold, ul, blink = unpack_style_fields(self.dix["block_code"])
         for x in token.children[0].content.split("\n"):
-            strings.append(click.style( pre + x + suf, fg=fg, bold=bold, bg=bg, underline=ul, blink=blink))
+            strings.append(click.style(pre + x + suf, fg=fg, bold=bold, bg=bg, underline=ul, blink=blink))
         inner = "\n".join(strings[:-1])
         return template.format(inner)
 
