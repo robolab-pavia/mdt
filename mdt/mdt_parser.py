@@ -93,7 +93,8 @@ def change_history_container():
     idx = AppState.history_index
     file_manager[idx] = '[' + file_manager[idx] + ']'
     line = ' '.join(file_manager)
-    AppState.root_container.get_children()[1].content.buffer.text = AppState.history_template.format(line)
+    AppState.root_container.get_children()[1].content.buffer.text = \
+        AppState.history_template.format(line)
 
 
 @bindings.add('left')
@@ -143,7 +144,9 @@ def beginning_of_file(event):
 @bindings.add('end')
 def end_of_file(event):
     """Go to the end of file."""
-    AppState.start_position = len(AppState.rendered.split('\n')) - AppState.app.renderer.output.get_size()[0]
+    AppState.start_position = \
+        len(AppState.rendered.split('\n')) - \
+        AppState.app.renderer.output.get_size().rows
 
 
 @bindings.add('up')
@@ -156,8 +159,9 @@ def get_up(event):
 @bindings.add('pageup')
 def page_up(event):
     """Page up the file."""
-    if AppState.start_position > AppState.app.renderer.output.get_size()[0]:
-        AppState.start_position -= AppState.app.renderer.output.get_size()[0]
+    n_rows = AppState.app.renderer.output.get_size().rows
+    if AppState.start_position > n_rows:
+        AppState.start_position -= n_rows
     else:
         AppState.start_position = 0
 
@@ -165,11 +169,11 @@ def page_up(event):
 @bindings.add('pagedown')
 def page_down(event):
     """One page down the file."""
-    if AppState.start_position < len(AppState.rendered.split('\n'))-2*AppState.app.renderer.output.get_size()[0]:
-        AppState.start_position += AppState.app.renderer.output.get_size()[0]
+    n_rows = AppState.app.renderer.output.get_size().rows
+    if AppState.start_position < len(AppState.rendered.split('\n')) - 2 * n_rows:
+        AppState.start_position += n_rows
     else:
-        AppState.start_position = len(AppState.rendered.split('\n')) - \
-                                  AppState.app.renderer.output.get_size()[0]
+        AppState.start_position = len(AppState.rendered.split('\n')) - n_rows
 
 
 @bindings.add('q')
@@ -185,15 +189,16 @@ def exit_(event):
 @bindings.add('tab')
 def link_after(event):
     """Go to the next link."""
+    n_rows = AppState.app.renderer.output.get_size().rows
     if AppState.current_link >= len(list(AppState.urls))-1:
         AppState.current_link = -1
     if len(AppState.urls) != 0:
         if AppState.current_link < len(list(AppState.urls))-1:
             AppState.current_link += 1
-            if AppState.line_link_number[AppState.current_link] - 1 + AppState.app.renderer.output.get_size()[0] < len(AppState.rendered.split('\n')):
+            if AppState.line_link_number[AppState.current_link] - 1 + n_rows < len(AppState.rendered.split('\n')):
                 AppState.start_position = AppState.line_link_number[AppState.current_link] - 1
             else:
-                AppState.start_position = len(AppState.rendered.split('\n')) - AppState.app.renderer.output.get_size()[0]
+                AppState.start_position = len(AppState.rendered.split('\n')) - n_rows
         if len(list(AppState.urls)) == 1:
             AppState.start_position = AppState.line_link_number[0] - 1
         title = list(AppState.urls)[AppState.current_link]
@@ -206,14 +211,14 @@ def link_before(event):
     """Go to the previous link."""
     if len(AppState.urls) <= 0:
         return
+    n_rows = AppState.app.renderer.output.get_size().rows
     if AppState.current_link > 0:
         AppState.current_link -= 1
         if AppState.line_link_number[AppState.current_link] - 1 + \
-                AppState.app.renderer.output.get_size()[0] < len(AppState.rendered.split('\n')):
+                n_rows < len(AppState.rendered.split('\n')):
             AppState.start_position = AppState.line_link_number[AppState.current_link] - 1
         else:
-            AppState.start_position = len(AppState.rendered.split('\n')) - \
-                                      AppState.app.renderer.output.get_size()[0]
+            AppState.start_position = len(AppState.rendered.split('\n')) - n_rows
         title = list(AppState.urls)[AppState.current_link]
         link = AppState.urls[list(AppState.urls)[AppState.current_link]]
         AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + title + '](' + link + ')',
@@ -268,7 +273,7 @@ def wrap_text(app):
 
     AppState.root_container.get_children()[0].content = FormattedTextControl(
         text=ANSI("\n".join(AppState.rendered.split("\n")[AppState.start_position:len(AppState.rendered.split("\n"))])))
-    AppState.end_position = AppState.start_position + app.renderer.output.get_size()[0]
+    AppState.end_position = AppState.start_position + app.renderer.output.get_size().rows
     AppState.line_link_number = []
     change_history_container()
     for w in (list(AppState.urls)):
