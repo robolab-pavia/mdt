@@ -17,6 +17,7 @@
     If not, see <http://www.gnu.org/licenses/>.
 """
 import json
+from json.decoder import JSONDecodeError
 import textwrap
 import webbrowser
 import ansiwrap
@@ -389,8 +390,13 @@ def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
         theme_ = theme_file
     try:
         with open(theme_) as j:
-            AppState.custom_themes = json.load(j)
-    except Exception:
+            try:
+                AppState.custom_themes = json.load(j)
+            except JSONDecodeError as e:
+                print("Error reading theme file {}.".format(theme_))
+                print(e)
+                exit(1)
+    except FileNotFoundError:
         print("Theme file {} not found.".format(theme_))
         exit(1)
     if mdfile is None:
@@ -399,7 +405,7 @@ def cmd_show(mdfile, i=True, col=None, rmargin=0, theme=None, theme_file=None):
     try:
         with open(mdfile, 'r') as f:
             AppState.p_text = f.read()
-    except:
+    except FileNotFoundError:
         print("Markdown file {} not found.".format(mdfile))
         exit(1)
     AppState.history.append((mdfile, mdfile))
