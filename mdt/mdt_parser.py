@@ -200,44 +200,45 @@ def link_after(event):
 @bindings.add('s-tab')
 def link_before(event):
     """Go to the previous link."""
-    if len(AppState.urls) != 0:
-        if AppState.current_link > 0:
-            AppState.current_link -= 1
-            if AppState.line_link_number[AppState.current_link] - 1 + \
-                    AppState.app.renderer.output.get_size()[0] < len(AppState.rendered.split('\n')):
-                AppState.start_position = AppState.line_link_number[AppState.current_link] - 1
-            else:
-                AppState.start_position = len(AppState.rendered.split('\n')) - \
-                                          AppState.app.renderer.output.get_size()[0]
-            title = list(AppState.urls)[AppState.current_link]
-            link = AppState.urls[list(AppState.urls)[AppState.current_link]]
-            AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + title + '](' + link + ')',
+    if len(AppState.urls) <= 0:
+        return
+    if AppState.current_link > 0:
+        AppState.current_link -= 1
+        if AppState.line_link_number[AppState.current_link] - 1 + \
+                AppState.app.renderer.output.get_size()[0] < len(AppState.rendered.split('\n')):
+            AppState.start_position = AppState.line_link_number[AppState.current_link] - 1
+        else:
+            AppState.start_position = len(AppState.rendered.split('\n')) - \
+                                      AppState.app.renderer.output.get_size()[0]
+        title = list(AppState.urls)[AppState.current_link]
+        link = AppState.urls[list(AppState.urls)[AppState.current_link]]
+        AppState.p_text = AppState.p_text.replace('\007', '').replace('[' + title + '](' + link + ')',
                                                                                           '[\007' + title + '](' + link + ')')
 
 @bindings.add('enter')
 def enter_link(event):
     """Open the selected link."""
-    if len(AppState.urls) > 0:
-        link_ = AppState.urls[list(AppState.urls)[AppState.current_link]]
-        link_name = list(AppState.urls)[AppState.current_link]
-        if (link_.endswith(".md")):
-            AppState.urls = {}
-            AppState.history_index += 1
-            try:
-                with open(link_, 'r') as f:
-                    AppState.p_text = f.read()
-                AppState.start_position = 0
-                AppState.current_link = -1
-                tup = (link_, link_name)
-                AppState.history.append(tup)
-                return
-            except:
-                pass
-        else:
-            try:
-                webbrowser.open(AppState.urls[list(AppState.urls)[AppState.current_link]])
-            except:
-                pass
+    if len(AppState.urls) <= 0:
+        return
+    link_ = AppState.urls[list(AppState.urls)[AppState.current_link]]
+    link_name = list(AppState.urls)[AppState.current_link]
+    if (link_.endswith(".md")):
+        AppState.urls = {}
+        AppState.history_index += 1
+        try:
+            with open(link_, 'r') as f:
+                AppState.p_text = f.read()
+            AppState.start_position = 0
+            AppState.current_link = -1
+            tup = (link_, link_name)
+            AppState.history.append(tup)
+        except:
+            pass
+    else:
+        try:
+            webbrowser.open(AppState.urls[list(AppState.urls)[AppState.current_link]])
+        except:
+            pass
 
 def wrap_text(app):
     """Resize window every time (callable)."""
